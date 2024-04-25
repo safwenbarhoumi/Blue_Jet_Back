@@ -1,27 +1,53 @@
 const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
+
 exports.getZoneDetails = async (req, res) => {
   try {
-    const userId = req.userId;
-    const user = await User.findById(userId).populate("farm");
-    if (!user || !user.farm) {
-      return res.status(404).send({ message: "User not found" });
+    // Fetch all zones
+    const zones = await Zone.find({});
+
+    // Check if any zones are found
+    if (zones.length === 0) {
+      return res.status(404).send({ message: "No zones found" });
     }
-    const zoneDetaills = user.farm[0].zones;
-    res.status(200).send(zoneDetaills);
+
+    // Return the zones
+    res.status(200).send(zones);
   } catch (err) {
-    res.status(500).send({ message: "some error occurred else where " });
+    res.status(500).send({ message: "Some error occurred elsewhere" });
   }
 };
 
-exports.getPumpsById = async (req, res) => {
+/* exports.getPumpsById = async (req, res) => {
   try {
-    const zoneId = req.params.id;
+    const zoneId = req.params.zoneId;
     const zone = await Zone.findById(zoneId);
     if (!zone) {
       return res.status(404).send({ message: "Zone not found" });
     }
+    console.log("the id of farm is", zone.farm._id);
+    const pumps = zone.pumps;
+    res.status(200).send(pumps);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+}; */
+
+exports.getPumpsById = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    const farmId = req.params.farmId;
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+    console.log("the Zone is", zone);
+    //console.log("the id of farm is", zone.farm[0]._id == farmId, !zone.farm);
+    if (!(zone.farm && zone.farm[0]._id == farmId)) {
+      return res.status(404).send({ message: "zone not found!!" });
+    }
+
     const pumps = zone.pumps;
     res.status(200).send(pumps);
   } catch (err) {
