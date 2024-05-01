@@ -22,8 +22,7 @@ exports.signup = async (req, res) => {
       alarm: alarm,
       wells: wells,
       pumps: pumps,
-      //zones: createdZones,
-      //zones.map((zone) => zone._id),
+
       zones: zones.map((zone) => ({
         localisation_zone: zone.localisation_zone,
         sensors: zone.sensors,

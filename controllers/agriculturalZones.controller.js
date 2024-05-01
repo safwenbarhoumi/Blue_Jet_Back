@@ -19,21 +19,6 @@ exports.getZoneDetails = async (req, res) => {
   }
 };
 
-/* exports.getPumpsById = async (req, res) => {
-  try {
-    const zoneId = req.params.zoneId;
-    const zone = await Zone.findById(zoneId);
-    if (!zone) {
-      return res.status(404).send({ message: "Zone not found" });
-    }
-    console.log("the id of farm is", zone.farm._id);
-    const pumps = zone.pumps;
-    res.status(200).send(pumps);
-  } catch (err) {
-    res.status(500).send({ message: err.message || "Some error occurred." });
-  }
-}; */
-
 exports.getPumpsById = async (req, res) => {
   try {
     const zoneId = req.params.zoneId;
