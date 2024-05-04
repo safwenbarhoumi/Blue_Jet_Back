@@ -159,3 +159,17 @@ exports.getLocations = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
 };
+
+exports.getSensorsByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.id;
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+    const sensors = zone.sensors;
+    res.status(200).send(sensors);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};

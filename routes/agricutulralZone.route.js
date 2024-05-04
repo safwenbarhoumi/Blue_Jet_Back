@@ -10,5 +10,6 @@ zoneRoute.post("/updateWellByZoneId/:id", controller.updateWellById);
 zoneRoute.get("/getAllValvesByZoneId/:id", controller.getAllValvesByZoneId);
 zoneRoute.post("/updateValveById/:zoneId/:valveId", controller.updateValveById);
 zoneRoute.get("/getLocations", controller.getLocations);
+zoneRoute.get("/getSensorsByZoneId/:id", controller.getSensorsByZoneId);
 
 module.exports = zoneRoute;
