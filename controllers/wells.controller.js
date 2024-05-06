@@ -1,6 +1,6 @@
 const Wells = require("../models/wells.model");
 const User = require("../models/user.model");
-const WellSchedule = require("../models/wellschedule.model");
+const WellSchedule = require("../models/wellSchedule.model");
 const {
   scheduleActivateWell,
   scheduleDesactivateWell,

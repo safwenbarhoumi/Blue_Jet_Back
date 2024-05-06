@@ -2,6 +2,7 @@ const Steg = require("../models/steg.model");
 const PumpSchedule = require("../models/pumpSchedule.model");
 const User = require("../models/user.model");
 const Notification = require("../models/notification.model");
+const wellschedule = require("../models/wellSchedule.model");
 
 const controlledBySteg = async (req, res) => {
   try {

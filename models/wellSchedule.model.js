@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+const path = require("path");
+const wellscheduleModelPath = path.resolve(
+  __dirname,
+  "../models/wellSchedule.model"
+);
+const wellscheduleModel = require(wellscheduleModelPath);
 
 const timeRangeSchema = new mongoose.Schema({
   open: { type: String, required: true },

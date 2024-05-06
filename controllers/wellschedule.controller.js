@@ -1,4 +1,4 @@
-const wellschedule = require("../models/wellschedule.model");
+const wellschedule = require("../models/wellSchedule.model");
 
 exports.createWellSchedule = async (req, res) => {
   try {
