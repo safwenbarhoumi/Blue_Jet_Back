@@ -25,6 +25,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
         #docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
+        #
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest
