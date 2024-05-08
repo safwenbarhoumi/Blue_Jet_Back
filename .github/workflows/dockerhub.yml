@@ -19,7 +19,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
         env:
-          REPOSITORY: Blue_Jet_Back
+          REPOSITORY: bluejetbackend
           IMAGE_TAG: latest
 
       - name: Build Docker image
