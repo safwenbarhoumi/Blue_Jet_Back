@@ -19,11 +19,11 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
         env:
-          REPOSITORY: bluejetbackend
+          #REPOSITORY: bluejetbackend
           IMAGE_TAG: latest
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/bluejetbackend:latest .
         #docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
         #
 
