@@ -23,7 +23,9 @@ jobs:
           IMAGE_TAG: latest
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
+        run: docker build -t safween/bluejetbackend:latest .
+        #docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest .
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest
+        run: docker push safween/bluejetbackend:latest
+        #docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest
