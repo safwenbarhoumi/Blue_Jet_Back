@@ -151,6 +151,33 @@ exports.updateValveById = async (req, res) => {
   }
 };
 
+exports.updateAllValvesByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.id;
+    const electricity_State = req.body.electricity_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update electricityState of all valves in the zone
+    zone.valves.forEach((valve) => {
+      valve.electricityState = electricity_State;
+    });
+
+    // Save the updated zone
+    await zone.save();
+
+    res
+      .status(200)
+      .send({ message: "All valves in the zone updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getLocations = async (req, res) => {
   try {
     const zones = await Zone.find({}, "localisation_zone");

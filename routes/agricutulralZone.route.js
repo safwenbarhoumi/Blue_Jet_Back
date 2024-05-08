@@ -9,6 +9,10 @@ zoneRoute.get("/getWellByZoneId/:id", controller.getWellById);
 zoneRoute.post("/updateWellByZoneId/:id", controller.updateWellById);
 zoneRoute.get("/getAllValvesByZoneId/:id", controller.getAllValvesByZoneId);
 zoneRoute.post("/updateValveById/:zoneId/:valveId", controller.updateValveById);
+zoneRoute.post(
+  "/updateAllValvesByZoneId/:id",
+  controller.updateAllValvesByZoneId
+);
 zoneRoute.get("/getLocations", controller.getLocations);
 zoneRoute.get("/getSensorsByZoneId/:id", controller.getSensorsByZoneId);
 
