@@ -28,5 +28,5 @@ jobs:
         #
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bluejetbackend:latest
         #docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ REPOSITORY }}:latest
