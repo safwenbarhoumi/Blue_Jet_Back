@@ -75,19 +75,26 @@ exports.resetPump = async (req, res) => {
 
 // Controller to create schedules for a one specific pump.
 exports.createPumpSchedule = async (req, res) => {
-  // const userId = req.userId;
+  //const userId = req.userId;
+  const { pumpId, day, timeRanges } = req.body;
+
   try {
-    const { pumpId, day, timeRanges } = req.body;
+    // const user = await User.findById(userId).populate("farm");
+    // if (!user || !user.farm) {
+    //   return res.status(404).send({ message: "User not found." });
+    // }
 
-    // to Validate input here
-
-    const pump = await Pump.findById(pumpId);
-    if (!pump) {
-      return res.status(404).json({ error: "Pump not found" });
+    // const zoneId = req.params.zoneId;
+    // const zone = await Zone.findById(zoneId);
+    // if (!zone) {
+    //   return res.status(404).send({ message: "Zone not found" });
+    // }
+    const pumpes = zone[0].pumps.find((pumpes) => pumpes._id == pumpId);
+    if (!pumpes) {
+      return res.status(404).send({ message: "pump not found." });
     }
-
+    console.log("pumps are :", pumpes);
     const newPumpSchedule = new PumpSchedule({ pumpId, day, timeRanges });
-    console.log("new", newPumpSchedule);
     const savedPumpSchedule = await newPumpSchedule.save();
 
     timeRanges.forEach((timeRange) => {
@@ -101,7 +108,6 @@ exports.createPumpSchedule = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 // Controller to get all pump schedules for a one specific pump.
 exports.getPumpSchedule = async (req, res) => {
   try {

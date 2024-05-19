@@ -1,8 +1,7 @@
-const agenda = require('../config'); 
+const agenda = require("../config");
 const Pump = require("../../../models/pumps.model");
 
-
-agenda.define('activate pump', async (job) => {
+agenda.define("activate pump", async (job) => {
   const { pumpId } = job.attrs.data;
   try {
     // Update the pump state to "open" in the database
@@ -13,7 +12,7 @@ agenda.define('activate pump', async (job) => {
   }
 });
 
-agenda.define('desactivate pump', async (job) => {
+agenda.define("desactivate pump", async (job) => {
   const { pumpId } = job.attrs.data;
   try {
     // Update the pump state to "close" in the database
@@ -25,26 +24,27 @@ agenda.define('desactivate pump', async (job) => {
 });
 
 function scheduleActivatePump(time, pumpId) {
-  agenda.schedule(time, 'activate pump', { pumpId });
+  //console.log("----------schedule activate pumps is running");
+  agenda.schedule(time, "activate pump", { pumpId });
 }
 
 function scheduleDesactivatePump(time, pumpId) {
-  agenda.schedule(time, 'desactivate pump', { pumpId });
+  agenda.schedule(time, "desactivate pump", { pumpId });
+  //console.log("----------schedule Desactivate pumps is running");
 }
 
 // Optionally, handle process events to gracefully shut down Agenda on script termination
-process.on('SIGTERM', () => {
+process.on("SIGTERM", () => {
   agenda.stop(() => {
     process.exit(0);
   });
 });
 
-process.on('SIGINT', () => {
+process.on("SIGINT", () => {
   agenda.stop(() => {
     process.exit(0);
   });
 });
-
 
 module.exports = {
   scheduleActivatePump,

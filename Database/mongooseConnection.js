@@ -16,8 +16,6 @@ const connectToMongoDB = async () => {
         useUnifiedTopology: true,
         connectTimeoutMS: 40000,
         socketTimeoutMS: 40000,
-        //   poolSize: 10,
-        //   maxPoolSize: 20
       });
       console.log("Successfully connected to the DB.");
       return; // Exit the retry loop if connection is successful

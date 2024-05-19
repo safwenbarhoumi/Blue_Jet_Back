@@ -9,7 +9,6 @@ exports.createWellSchedule = async (req, res) => {
     }
     const wellId = req.body.id;
     const wellschedule = req.body.wellschedule;
-
     const well = user.farm[0].wells.find((wells) => wells._id == wellId);
     if (!well) {
       return res.status(404).send({ message: "well not found." });
