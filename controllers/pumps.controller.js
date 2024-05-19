@@ -94,12 +94,13 @@ exports.createPumpSchedule = async (req, res) => {
     if (!pumpes) {
       return res.status(404).send({ message: "pump not found." });
     }
-    console.log("pumps are :", pumpes);
+    console.log("pumps are electricityState is : ");
+    console.log(zone.pumps[0].electricityState);
     const newPumpSchedule = new PumpSchedule({ pumpId, day, timeRanges });
     const savedPumpSchedule = await newPumpSchedule.save();
 
     timeRanges.forEach((timeRange) => {
-      scheduleActivatePump(timeRange.open, pumpId);
+      scheduleActivatePump(timeRange.open, pumpId, zoneId);
       scheduleDesactivatePump(timeRange.close, pumpId);
     });
 
