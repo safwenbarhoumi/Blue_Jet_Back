@@ -12,6 +12,19 @@ const agenda = new Agenda({
   maxConcurrency: 20,
 });
 
+// Define the job
+agenda.define("activate pump", async (job) => {
+  const { pumpId } = job.attrs.data;
+  // Find the pump by pumpId and update the electricityState
+  await Pump.findOneAndUpdate(
+    { pumpId: pumpId },
+    { electricityState: 1 },
+    { new: true }
+  );
+
+  console.log(`Pump ${pumpId} activated.`);
+});
+
 agenda
   .on("ready", () => (console.log("Agenda started!"), agenda.start()))
 

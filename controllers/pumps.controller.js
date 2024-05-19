@@ -1,6 +1,7 @@
 const Pump = require("../models/pumps.model");
 const PumpSchedule = require("../models/pumpSchedule.model");
 const User = require("../models/user.model");
+const Zone = require("../models/agriculturalZones.model");
 
 const {
   scheduleActivatePump,
@@ -84,12 +85,12 @@ exports.createPumpSchedule = async (req, res) => {
     //   return res.status(404).send({ message: "User not found." });
     // }
 
-    // const zoneId = req.params.zoneId;
-    // const zone = await Zone.findById(zoneId);
-    // if (!zone) {
-    //   return res.status(404).send({ message: "Zone not found" });
-    // }
-    const pumpes = zone[0].pumps.find((pumpes) => pumpes._id == pumpId);
+    const zoneId = req.body.zoneId;
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+    const pumpes = zone.pumps.find((pumpes) => pumpes._id == pumpId);
     if (!pumpes) {
       return res.status(404).send({ message: "pump not found." });
     }

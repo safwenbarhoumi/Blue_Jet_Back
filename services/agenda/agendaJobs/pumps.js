@@ -24,7 +24,6 @@ agenda.define("desactivate pump", async (job) => {
 });
 
 function scheduleActivatePump(time, pumpId) {
-  //console.log("----------schedule activate pumps is running");
   agenda.schedule(time, "activate pump", { pumpId });
 }
 
