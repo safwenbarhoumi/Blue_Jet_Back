@@ -1,6 +1,7 @@
 const Alarm = require("../models/alarm.model");
 const User = require("../models/user.model");
 const Notification = require("../models/notification.model");
+const { io } = require("../server"); // Import io instance
 
 exports.getAlarm = async (req, res) => {
   try {
@@ -22,28 +23,6 @@ exports.getAlarm = async (req, res) => {
   }
 };
 
-// this function calculate the date for the notification :
-/* const timeAgo = (previousDate) => {
-  const current = new Date();
-  const previous = new Date(previousDate);
-  const diff = current - previous;
-
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  if (seconds < 60) {
-    return "just now";
-  } else if (minutes === 1) {
-    return "1 minute ago";
-  } else if (minutes < 60) {
-    return `${minutes} minutes ago`;
-  } else if (hours === 1) {
-    return "1 hour ago";
-  } else {
-    return `${hours} hours ago`;
-  }
-}; */
 exports.updateAlarm = async (req, res) => {
   try {
     const userId = req.userId;
@@ -61,7 +40,6 @@ exports.updateAlarm = async (req, res) => {
       await user.farm[0].save();
       //send notification in the database :
       const currentDate = new Date().toISOString();
-      //const timeDifference = timeAgo(currentDate);
       const newNotification = new Notification({
         title: `The Alarme has been changed from ${alarme1} ======> ${alarmState}.`,
         date: currentDate,

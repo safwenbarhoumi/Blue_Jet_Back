@@ -1,7 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const socketIo = require("socket.io");
 const app = express();
+
+const http = require("http");
+const server = http.createServer(app);
+const io = socketIo(server);
+
 const cookieSession = require("cookie-session");
 require("dotenv").config();
 
@@ -42,6 +48,15 @@ app.use(
   })
 );
 
+// Socket.IO connection
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
@@ -77,3 +92,4 @@ app.use("/api", mapsRoutes);
 app.use("/api", contactRoute);
 
 //admin middelwares
+module.exports = { app, server, io };
