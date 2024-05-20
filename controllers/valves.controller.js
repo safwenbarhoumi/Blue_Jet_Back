@@ -85,11 +85,11 @@ exports.createValveSchedule = async (req, res) => {
     const zoneId = req.body.zoneId;
     const zone = await Zone.findById(zoneId);
     const Valves = zone.valves.find((valves) => valves._id == valveId);
-    //const userId = req.userId;
-    /* const user = await User.findById(userId).populate("farm");
+    const userId = req.userId;
+    const user = await User.findById(userId).populate("farm");
     if (!user || !user.farm) {
       return res.status(404).send({ message: "User not found" });
-    } */
+    }
     /* const valve = await Valve.findById(valveId);
     if (!valve) {
       return res.status(404).send({ message: "Valve not found" });

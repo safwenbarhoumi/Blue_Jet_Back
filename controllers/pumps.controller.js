@@ -76,14 +76,14 @@ exports.resetPump = async (req, res) => {
 
 // Controller to create schedules for a one specific pump.
 exports.createPumpSchedule = async (req, res) => {
-  //const userId = req.userId;
+  const userId = req.userId;
   const { pumpId, day, timeRanges } = req.body;
 
   try {
-    // const user = await User.findById(userId).populate("farm");
-    // if (!user || !user.farm) {
-    //   return res.status(404).send({ message: "User not found." });
-    // }
+    const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found." });
+    }
     const zoneId = req.body.zoneId;
     const zone = await Zone.findById(zoneId);
     if (!zone) {
