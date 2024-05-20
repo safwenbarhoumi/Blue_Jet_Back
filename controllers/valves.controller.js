@@ -1,16 +1,19 @@
 const Valve = require("../models/valves.model");
 const ValveSchedule = require("../models/valveSchedule.model");
 const User = require("../models/user.model");
+const Zone = require("../models/agriculturalZones.model");
+const {
+  scheduleActivateValve,
+  scheduleDesactivateValve,
+} = require("../services/agenda/agendaJobs/valves");
 
 exports.getAllValves = async (req, res) => {
   try {
     const userId = req.userId;
-
     const user = await User.findById(userId).populate("farm");
     if (!user || !user.farm) {
       return res.status(404).send({ message: "User not found" });
     }
-
     const allValves = user.farm[0].zones.flatMap((zone) => zone.valves);
     res.status(200).send(allValves);
   } catch (err) {
@@ -77,23 +80,31 @@ exports.resetValve = async (req, res) => {
 
 exports.createValveSchedule = async (req, res) => {
   try {
-    const userId = req.userId;
-
-    const user = await User.findById(userId).populate("farm");
-    if (!user || !user.farm) {
-      return res.status(404).send({ message: "User not found" });
-    }
-
     const { valveId, day, timeRanges } = req.body;
 
-    const valve = await Valve.findById(valveId);
+    const zoneId = req.body.zoneId;
+    const zone = await Zone.findById(zoneId);
+    const Valves = zone.valves.find((valves) => valves._id == valveId);
+    //const userId = req.userId;
+    /* const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found" });
+    } */
+    /* const valve = await Valve.findById(valveId);
     if (!valve) {
       return res.status(404).send({ message: "Valve not found" });
-    }
-
-    const newValveSchedule = new ValveSchedule({ valveId, day, timeRanges });
+    } */
+    const newValveSchedule = new ValveSchedule({
+      valveId,
+      day,
+      timeRanges,
+    });
     const savedValveSchedule = await newValveSchedule.save();
 
+    timeRanges.forEach((timeRange) => {
+      scheduleActivateValve(timeRange.open, valveId, zoneId);
+      scheduleDesactivateValve(timeRange.close, valveId, zoneId);
+    });
     res.status(201).json(savedValveSchedule);
   } catch (error) {
     console.error("Error creating valve schedule:", error);
