@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const timeRangeSchema = new mongoose.Schema({
   open: { type: String, required: true },
@@ -8,15 +8,23 @@ const timeRangeSchema = new mongoose.Schema({
 const PumpScheduleSchema = new mongoose.Schema({
   pumpId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Pump', 
+    ref: "Pump",
     required: true,
   },
   day: {
     type: String,
-    enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    enum: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ],
     required: true,
   },
   timeRanges: [timeRangeSchema],
 });
 
-module.exports = mongoose.model('PumpSchedule', PumpScheduleSchema);
+module.exports = mongoose.model("PumpSchedule", PumpScheduleSchema);

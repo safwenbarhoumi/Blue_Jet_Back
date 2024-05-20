@@ -1,6 +1,8 @@
 const Wells = require("../models/wells.model");
 const User = require("../models/user.model");
 const WellSchedule = require("../models/wellSchedule.model");
+const Zone = require("../models/agriculturalZones.model");
+
 const {
   scheduleActivateWell,
   scheduleDesactivateWell,
@@ -75,21 +77,31 @@ exports.createWellSchedule = async (req, res) => {
 
   try {
     const { wellId, day, timeRanges } = req.body;
+    const zoneId = req.body.zoneId;
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    const well = zone.wells.find((w) => w._id == wellId);
+    if (!well) {
+      return res.status(404).send({ message: "well not found." });
+    }
 
     // to Validate input here
 
-    const well = await Wells.findById(wellId);
+    /* const well = await Wells.findById(wellId);
     if (!well) {
       return res.status(404).json({ error: "Well not found" });
-    }
+    } */
 
     const newWellSchedule = new WellSchedule({ wellId, day, timeRanges });
     console.log("new", newWellSchedule);
     const savedWellSchedule = await newWellSchedule.save();
 
     timeRanges.forEach((timeRange) => {
-      scheduleActivateWell(timeRange.open, wellId);
-      scheduleDesactivateWell(timeRange.close, wellId);
+      scheduleActivateWell(timeRange.open, wellId, zoneId);
+      scheduleDesactivateWell(timeRange.close, wellId, zoneId);
     });
 
     res.status(201).json(savedWellSchedule);
