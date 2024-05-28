@@ -73,15 +73,16 @@ exports.resetAllWells = async (req, res) => {
 };
 
 exports.createWellSchedule = async (req, res) => {
-  const userId = req.userId;
-
   try {
+    const userId = req.userId;
+    const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
     const { wellId, day, timeRanges } = req.body;
     const zoneId = req.body.zoneId;
 
-    if (!user || !user.farm) {
-      return res.status(404).send({ message: "User not found" });
-    }
     const zone = await Zone.findById(zoneId);
     if (!zone) {
       return res.status(404).send({ message: "Zone not found" });

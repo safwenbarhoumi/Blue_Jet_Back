@@ -27,7 +27,7 @@ exports.getPumpsById = async (req, res) => {
     if (!zone) {
       return res.status(404).send({ message: "Zone not found" });
     }
-    console.log("the Zone is", zone);
+    //console.log("the Zone is", zone);
     //console.log("the id of farm is", zone.farm[0]._id == farmId, !zone.farm);
     if (!(zone.farm && zone.farm[0]._id == farmId)) {
       return res.status(404).send({ message: "zone not found!!" });
