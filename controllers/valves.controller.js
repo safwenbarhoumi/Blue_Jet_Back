@@ -90,10 +90,7 @@ exports.createValveSchedule = async (req, res) => {
     if (!user || !user.farm) {
       return res.status(404).send({ message: "User not found" });
     }
-    /* const valve = await Valve.findById(valveId);
-    if (!valve) {
-      return res.status(404).send({ message: "Valve not found" });
-    } */
+
     const newValveSchedule = new ValveSchedule({
       valveId,
       day,
@@ -108,6 +105,49 @@ exports.createValveSchedule = async (req, res) => {
     res.status(201).json(savedValveSchedule);
   } catch (error) {
     console.error("Error creating valve schedule:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+// All valve :
+exports.createAllValveSchedule = async (req, res) => {
+  try {
+    const { day, timeRanges } = req.body;
+    const zoneId = req.body.zoneId;
+
+    // Find the zone by ID
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    const userId = req.userId;
+    const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Iterate over each valve in the zone
+    for (const valve of zone.valves) {
+      const valveId = valve._id;
+
+      const newValveSchedule = new ValveSchedule({
+        valveId,
+        day,
+        timeRanges,
+      });
+      const savedValveSchedule = await newValveSchedule.save();
+
+      timeRanges.forEach((timeRange) => {
+        scheduleActivateValve(timeRange.open, valveId, zoneId);
+        scheduleDesactivateValve(timeRange.close, valveId, zoneId);
+      });
+    }
+
+    res
+      .status(201)
+      .send({ message: "Schedules created for all valves in the zone" });
+  } catch (error) {
+    console.error("Error creating valve schedules:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

@@ -17,23 +17,16 @@ const Zone = require("../../../models/agriculturalZones.model");
 agenda.define("activate valve", async (job) => {
   const { valveId, zoneId } = job.attrs.data;
   try {
-    console.log("hello i m here  ");
-    console.log("the zone id is : ", zoneId);
-    console.log("the valve id  : ", valveId);
     const zone = await Zone.findById(zoneId);
     if (!zone) {
       console.error(`Zone with ID ${zoneId} not found.`);
       return;
     }
-
-    const valve = zone.valves.find((v) => v._id.toString() === valveId);
-    if (!valve) {
-      console.error(`Valve with ID ${valveId} not found in zone ${zoneId}.`);
-      return;
-    }
-    console.log("valve before1 : ", valve.electricityState);
-    valve.electricityState = 1;
-    console.log("valve after1 : ", valve.electricityState);
+    //zone.valves[0].electricityState = 1;
+    // Iterate over all valves and activate them
+    zone.valves.forEach((valve) => {
+      valve.electricityState = 1;
+    });
     await zone.save();
     console.log(`Activating valve ID ${valveId}`);
   } catch (error) {
@@ -72,11 +65,15 @@ agenda.define("desactivate valve", async (job) => {
   try {
     // await Valves.findByIdAndUpdate(valveId, {state: 0})
     const zone = await Zone.findById(zoneId);
-    zone.valves[0].electricityState = 0;
+    //zone.valves[0].electricityState = 0;
+    // Iterate over all valves and activate them
+    zone.valves.forEach((valve) => {
+      valve.electricityState = 0;
+    });
     await zone.save();
     console.log(`Desactivating valve ID ${valveId}`);
   } catch (error) {
-    console.error(`Error activating valve with ID ${valveId}:`, error);
+    console.error(`Error desactivating valve with ID ${valveId}:`, error);
   }
 });
 
