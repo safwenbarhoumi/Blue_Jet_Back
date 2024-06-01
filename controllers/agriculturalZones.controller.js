@@ -200,3 +200,42 @@ exports.getSensorsByZoneId = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
 };
+exports.resetAll = async (req, res) => {
+  try {
+    // Fetch all zones
+    const zones = await Zone.find({});
+
+    // Iterate through each zone and reset pumps, valves, and wells
+    for (let zone of zones) {
+      if (zone.pumps && zone.pumps.length > 0) {
+        zone.pumps.forEach((pump) => {
+          pump.electricityState = 0;
+          pump.hardwareState = 0;
+        });
+      }
+
+      if (zone.valves && zone.valves.length > 0) {
+        zone.valves.forEach((valve) => {
+          valve.electricityState = 0;
+          valve.hardwareState = 0;
+        });
+      }
+
+      if (zone.wells && zone.wells.length > 0) {
+        zone.wells.forEach((well) => {
+          well.electricityState = 0;
+          well.hardwareState = 0;
+        });
+      }
+
+      // Save the updated zone
+      await zone.save();
+    }
+
+    res.status(200).send({
+      message: "All pumps, valves, and wells have been reset successfully",
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
