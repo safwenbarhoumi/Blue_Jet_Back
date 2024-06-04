@@ -2,7 +2,7 @@ const controller = require("../controllers/agriculturalZones.controller");
 const { authJWT } = require("../middlewares");
 const zoneRoute = require("express").Router();
 
-zoneRoute.get("/zone/:farmId", controller.getZoneDetails);
+zoneRoute.get("/zone", controller.getZoneDetails);
 zoneRoute.get("/getPumpByZoneId/:farmId/:zoneId", controller.getPumpsById);
 zoneRoute.post("/updatePumpByZoneId/:id", controller.updatePumpById);
 zoneRoute.get("/getWellByZoneId/:id", controller.getWellById);

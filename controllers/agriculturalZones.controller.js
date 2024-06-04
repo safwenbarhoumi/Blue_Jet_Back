@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
 
-/* exports.getZoneDetails = async (req, res) => {
+exports.getZoneDetails = async (req, res) => {
   try {
     // Fetch all zones
     const zones = await Zone.find({});
@@ -17,8 +17,8 @@ const Pump = require("../models/pumps.model");
   } catch (err) {
     res.status(500).send({ message: "Some error occurred elsewhere" });
   }
-}; */
-exports.getZoneDetails = async (req, res) => {
+};
+/* exports.getZoneDetails = async (req, res) => {
   try {
     const farmId = req.params.farmId.toString(); // Convert farmId to string for comparison
 
@@ -55,7 +55,7 @@ exports.getZoneDetails = async (req, res) => {
       .status(500)
       .send({ message: "Some error occurred while fetching zone details" });
   }
-};
+}; */
 
 exports.getPumpsById = async (req, res) => {
   try {
