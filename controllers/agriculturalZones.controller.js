@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
 
-exports.getZoneDetails = async (req, res) => {
+/* exports.getZoneDetails = async (req, res) => {
   try {
     // Fetch all zones
     const zones = await Zone.find({});
@@ -16,6 +16,44 @@ exports.getZoneDetails = async (req, res) => {
     res.status(200).send(zones);
   } catch (err) {
     res.status(500).send({ message: "Some error occurred elsewhere" });
+  }
+}; */
+exports.getZoneDetails = async (req, res) => {
+  try {
+    const farmId = req.params.farmId.toString(); // Convert farmId to string for comparison
+
+    // Fetch all zones
+    const zones = await Zone.find({});
+
+    // Check if any zones are found
+    if (zones.length === 0) {
+      return res.status(404).send({ message: "No zones found" });
+    }
+
+    // Initialize an array to store matched zones
+    const matchedZones = [];
+
+    // Loop through each zone to find matches with the farm ID
+    for (const zone of zones) {
+      const farmId2 = zone.farm[0].toString(); // Ensure farm ID is converted to string for comparison
+      if (farmId === farmId2) {
+        matchedZones.push(zone);
+      }
+    }
+
+    // Check if any zones are matched
+    if (matchedZones.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No zones found for the specified farm ID" });
+    }
+
+    // Return the matched zones
+    res.status(200).send(matchedZones);
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: "Some error occurred while fetching zone details" });
   }
 };
 
