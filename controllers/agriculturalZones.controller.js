@@ -56,7 +56,7 @@ exports.getZoneDetails = async (req, res) => {
       .send({ message: "Some error occurred while fetching zone details" });
   }
 }; */
-
+// changes code !
 exports.getPumpsById = async (req, res) => {
   try {
     const zoneId = req.params.zoneId;
