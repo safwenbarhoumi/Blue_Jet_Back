@@ -122,7 +122,7 @@ exports.getWellById = async (req, res) => {
 exports.updateWellById = async (req, res) => {
   try {
     const zoneId = req.params.id;
-    const electricity_State = req.body.electricity_State;
+    //const electricity_State = req.body.electricity_State;
 
     // Find the zone
     const zone = await Zone.findById(zoneId);
@@ -134,12 +134,12 @@ exports.updateWellById = async (req, res) => {
       return res.status(404).send({ message: "No well found in the zone" });
     }
     // Assuming there is only one well in the zone
-    zone.wells[0].electricityState = electricity_State;
+    zone.wells[0].electricityState = !zone.wells[0].electricityState;
 
     // Save the updated zone
     await zone.save();
 
-    res.status(200).send({ etat: `${electricity_State}` });
+    res.status(200).send({ etat: `${zone.wells[0].electricityState}` });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
