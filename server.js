@@ -76,6 +76,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
+app.use("/api", agriculturalZonesRoute);
 //agriculteur middelwares
 app.use("/api", authRoutes);
 
@@ -85,7 +86,7 @@ app.use("/api", notificationRoute);
 app.use("/api", alarmRoute);
 app.use("/api", sensorsRoute);
 app.use("/api", pumpsRoute);
-app.use("/api", agriculturalZonesRoute);
+
 app.use("/api", wellsRoute);
 app.use("/api", valvesRoute);
 app.use("/api", farmRoute);
