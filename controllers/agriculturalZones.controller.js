@@ -145,6 +145,32 @@ exports.updateWellById = async (req, res) => {
   }
 };
 
+exports.updatHardwareWellById = async (req, res) => {
+  try {
+    const zoneId = req.params.id;
+    const hardware_State = req.body.hardware_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    if (!zone.wells || zone.wells.length === 0) {
+      return res.status(404).send({ message: "No well found in the zone" });
+    }
+    // Assuming there is only one well in the zone
+    zone.wells[0].hardwareState = hardware_State;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "succes" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.stateWellById = async (req, res) => {
   try {
     const zoneId = req.body.id;

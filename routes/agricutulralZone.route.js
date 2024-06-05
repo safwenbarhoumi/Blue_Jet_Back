@@ -19,5 +19,6 @@ zoneRoute.post("/resetAll", controller.resetAll);
 
 // hardware :
 zoneRoute.post("/stateWellById", controller.stateWellById);
+zoneRoute.post("/updateHardwareWellByZoneId", controller.updatHardwareWellById);
 
 module.exports = zoneRoute;
