@@ -139,7 +139,7 @@ exports.updateWellById = async (req, res) => {
     // Save the updated zone
     await zone.save();
 
-    res.status(200).send({ etat: `${electricityState}` });
+    res.status(200).send({ etat: `${electricity_State}` });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
