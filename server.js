@@ -15,6 +15,9 @@ const { connectToMongoDB } = require("./Database/mongooseConnection");
 
 const authJwt = require("./middlewares/authJWT");
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.json({ limit: "10mb" }));
+
 // agriculteur routes
 const userRoute = require("./routes/user.route");
 const notificationRoute = require("./routes/notification.route");
