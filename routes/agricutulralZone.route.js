@@ -17,4 +17,7 @@ zoneRoute.get("/getLocations", controller.getLocations);
 zoneRoute.get("/getSensorsByZoneId/:id", controller.getSensorsByZoneId);
 zoneRoute.post("/resetAll", controller.resetAll);
 
+// hardware :
+zoneRoute.post("/stateWellById", controller.stateWellById);
+
 module.exports = zoneRoute;

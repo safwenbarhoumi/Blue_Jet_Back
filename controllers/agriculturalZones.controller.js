@@ -145,6 +145,32 @@ exports.updateWellById = async (req, res) => {
   }
 };
 
+exports.stateWellById = async (req, res) => {
+  try {
+    const zoneId = req.body.id;
+    //const electricity_State = req.body.electricity_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    if (!zone.wells || zone.wells.length === 0) {
+      return res.status(404).send({ message: "No well found in the zone" });
+    }
+    // Assuming there is only one well in the zone
+    //zone.wells[0].electricityState = !zone.wells[0].electricityState;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ etat: `${zone.wells[0].electricityState}` });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getAllValvesByZoneId = async (req, res) => {
   try {
     const zoneId = req.params.id;
