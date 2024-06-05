@@ -147,7 +147,7 @@ exports.updateWellById = async (req, res) => {
 
 exports.updatHardwareWellById = async (req, res) => {
   try {
-    const zoneId = req.params.id;
+    const zoneId = req.body.id;
     const hardware_State = req.body.hardware_State;
 
     // Find the zone
