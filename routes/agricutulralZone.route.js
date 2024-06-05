@@ -21,4 +21,10 @@ zoneRoute.post("/resetAll", controller.resetAll);
 zoneRoute.post("/stateWellById", controller.stateWellById);
 zoneRoute.post("/updateHardwareWellByZoneId", controller.updatHardwareWellById);
 
+zoneRoute.post("/statePumpByZoneId", controller.statePumpByZoneId);
+zoneRoute.post("/updateHardwarePumpById", controller.updateHardwarePumpById);
+
+zoneRoute.post("/stateValveById", controller.stateValveById);
+zoneRoute.post("/updateHardwareValveById", controller.updateHardwareValveById);
+
 module.exports = zoneRoute;

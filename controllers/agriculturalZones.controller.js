@@ -105,6 +105,60 @@ exports.updatePumpById = async (req, res) => {
   }
 };
 
+exports.updateHardwarePumpById = async (req, res) => {
+  try {
+    const zoneId = req.body.id;
+    const hardware_State = req.body.hardware_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update the hardware_State of the pump in the zone
+    if (!zone.pumps || zone.pumps.length === 0) {
+      return res.status(404).send({ message: "No pump found in the zone" });
+    }
+    // Assuming there is only one pump in the zone
+    zone.pumps[0].hardwareState = hardware_State;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "success" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
+exports.statePumpByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.body.id;
+    //const electricity_State = req.body.electricity_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update the electricity_State of the pump in the zone
+    if (!zone.pumps || zone.pumps.length === 0) {
+      return res.status(404).send({ message: "No pump found in the zone" });
+    }
+    // Assuming there is only one pump in the zone
+    //zone.pumps[0].electricityState = electricity_State;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ etat: `${zone.pumps[0].electricityState}` });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getWellById = async (req, res) => {
   try {
     const zoneId = req.params.id;
@@ -236,6 +290,66 @@ exports.updateValveById = async (req, res) => {
     await zone.save();
 
     res.status(200).send({ message: "Valve updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
+exports.updateHardwareValveById = async (req, res) => {
+  try {
+    const zoneId = req.body.zoneId;
+    const valveId = req.body.valveId;
+    const hardware_State = req.body.hardware_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Find the valve in the zone
+    const valve = zone.valves.id(valveId);
+    if (!valve) {
+      return res.status(404).send({ message: "Valve not found in the zone" });
+    }
+
+    // Update the electricityState of the valve
+    valve.hardwareState = hardware_State;
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "success" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
+exports.stateValveById = async (req, res) => {
+  try {
+    const zoneId = req.body.zoneId;
+    console.log("zone id is  : ", zoneId);
+    const valveId = req.body.valveId;
+    //const electricity_State = req.body.electricity_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Find the valve in the zone
+    const valve = zone.valves.id(valveId);
+    if (!valve) {
+      return res.status(404).send({ message: "Valve not found in the zone" });
+    }
+
+    // Update the electricityState of the valve
+    const etat = valve.electricityState; // = electricity_State;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ etat: `${etat}` });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
