@@ -25,11 +25,11 @@ exports.getAlarm = async (req, res) => {
 
 exports.updateAlarm = async (req, res) => {
   try {
-    const userId = req.userId;
+    /* const userId = req.userId;
     const user = await User.findById(userId).populate("farm");
     if (!user || !user.farm) {
       return res.status(404).send({ message: "user not found" });
-    }
+    } */
     const alarme1 = user.farm[0].alarm;
     const alarmState = req.body.state;
     if (alarme1 == alarmState) {

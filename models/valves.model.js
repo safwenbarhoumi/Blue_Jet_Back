@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const valvesSchema = new mongoose.Schema({
+  nameValve: {
+    type: String,
+  },
   state: {
     type: Number,
   },

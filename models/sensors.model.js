@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const sensorsSchema = new mongoose.Schema(
   {
     type: {
-      type: String, // ph - temperature ....
+      type: String,
     },
     mesure: {
       type: Number,
@@ -11,8 +11,12 @@ const sensorsSchema = new mongoose.Schema(
     electricityState: {
       type: Number,
     },
-  },
-  { timestamps: true }
+    id_sensor: {
+      type: Number,
+      require: true,
+    },
+  }
+  //{ timestamps: true }
 );
 
 module.exports = mongoose.model("Sensors", sensorsSchema);

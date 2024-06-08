@@ -7,10 +7,17 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 exports.signup = async (req, res) => {
-  console.log("==============>signin entred");
   try {
-    const { zones, wells, pumps, culture, localisation_farm, alarm, steg } =
-      req.body;
+    const {
+      zones,
+      wells,
+      pumps,
+      culture,
+      localisation_farm,
+      alarm,
+      steg,
+      sensors,
+    } = req.body;
 
     zones.forEach((zone) => {
       console.log(zone.sensors);

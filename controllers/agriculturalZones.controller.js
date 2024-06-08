@@ -2,6 +2,36 @@ const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
 
+exports.updateValveNameById = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    const valveId = req.params.valveId;
+    const nameValve = req.body.nameValve;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Find the valve in the zone
+    const valve = zone.valves.id(valveId);
+    if (!valve) {
+      return res.status(404).send({ message: "Valve not found in the zone" });
+    }
+
+    // Update the nameValve of the valve
+    valve.nameValve = nameValve;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "Valve name updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getZoneDetails = async (req, res) => {
   try {
     // Fetch all zones
@@ -295,6 +325,45 @@ exports.updateValveById = async (req, res) => {
   }
 };
 
+//Hardware steg :
+exports.updateStateSTEGByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.body.zoneId;
+    const newState = req.body.stateSteg;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update State of all pumps in the zone
+    zone.pumps.forEach((pump) => {
+      pump.state = newState;
+    });
+
+    // Update State of all valves in the zone
+    zone.valves.forEach((valve) => {
+      valve.state = newState;
+    });
+
+    // Update State of all wells in the zone
+    zone.wells.forEach((well) => {
+      well.state = newState;
+    });
+
+    // Save the updated zone
+    //await zone.save();
+    const savedZone = await zone.save();
+    console.log("Saved zone: ", savedZone);
+
+    res.status(200).send({ message: `sucess` });
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.updateHardwareValveById = async (req, res) => {
   try {
     const zoneId = req.body.zoneId;
@@ -393,17 +462,73 @@ exports.getLocations = async (req, res) => {
 
 exports.getSensorsByZoneId = async (req, res) => {
   try {
-    const zoneId = req.params.id;
+    const zoneId = req.params.zoneId;
+    const sensorId = req.params.sensorId;
+    console.log("sensorId : ", sensorId);
+
     const zone = await Zone.findById(zoneId);
     if (!zone) {
       return res.status(404).send({ message: "Zone not found" });
     }
-    const sensors = zone.sensors;
-    res.status(200).send(sensors);
+
+    // Filter sensors by sensorId
+    const matchedSensor = zone.sensors.find(
+      (sensor) => sensor.id_sensor === parseInt(sensorId)
+    );
+    console.log("matchedSensor : ", matchedSensor);
+
+    if (!matchedSensor) {
+      return res
+        .status(404)
+        .send({ message: "Sensor not found in the specified zone" });
+    }
+
+    res.status(200).send(matchedSensor);
   } catch (err) {
+    console.error(err); // Log the error for debugging
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
 };
+
+//hardware sensors :
+exports.updateMesureByZoneId = async (req, res) => {
+  try {
+    //const { zoneId, sensorId } = req.params;
+    const zoneId = req.body.zoneId;
+    const sensorId = req.body.sensorId;
+    const valeur = req.body.valeur;
+
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Find the sensor by id_sensor
+    const matchedSensor = zone.sensors.find(
+      (sensor) => sensor.id_sensor === parseInt(sensorId)
+    );
+
+    if (!matchedSensor) {
+      return res
+        .status(404)
+        .send({ message: "Sensor not found in the specified zone" });
+    }
+
+    // Update the mesure field
+    matchedSensor.mesure = valeur;
+
+    // Save the updated zone document
+    await zone.save();
+
+    res.status(200).send({
+      message: "success",
+    });
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.resetAll = async (req, res) => {
   try {
     // Fetch all zones

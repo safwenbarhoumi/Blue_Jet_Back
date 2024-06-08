@@ -3,6 +3,10 @@ const { authJWT } = require("../middlewares");
 const zoneRoute = require("express").Router();
 
 zoneRoute.get("/zone", controller.getZoneDetails);
+zoneRoute.post(
+  "/updateValveNameById/:zoneId/:valveId",
+  controller.updateValveNameById
+);
 zoneRoute.get("/getPumpByZoneId/:farmId/:zoneId", controller.getPumpsById);
 zoneRoute.post("/updatePumpByZoneId/:id", controller.updatePumpById);
 zoneRoute.get("/getWellByZoneId/:id", controller.getWellById);
@@ -14,7 +18,10 @@ zoneRoute.post(
   controller.updateAllValvesByZoneId
 );
 zoneRoute.get("/getLocations", controller.getLocations);
-zoneRoute.get("/getSensorsByZoneId/:id", controller.getSensorsByZoneId);
+zoneRoute.get(
+  "/getSensorsByZoneId/:zoneId/:sensorId",
+  controller.getSensorsByZoneId
+);
 zoneRoute.post("/resetAll", controller.resetAll);
 
 // hardware :
@@ -26,5 +33,11 @@ zoneRoute.post("/updateHardwarePumpById", controller.updateHardwarePumpById);
 
 zoneRoute.post("/stateValveById", controller.stateValveById);
 zoneRoute.post("/updateHardwareValveById", controller.updateHardwareValveById);
+
+zoneRoute.post("/updateMesureByZoneId", controller.updateMesureByZoneId);
+
+zoneRoute.post("/resetAll", controller.resetAll);
+
+zoneRoute.post("/updateStateSTEGByZoneId", controller.updateStateSTEGByZoneId);
 
 module.exports = zoneRoute;
