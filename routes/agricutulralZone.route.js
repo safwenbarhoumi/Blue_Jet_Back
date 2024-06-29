@@ -17,7 +17,7 @@ zoneRoute.post(
   "/updateAllValvesByZoneId/:id",
   controller.updateAllValvesByZoneId
 );
-zoneRoute.get("/getLocations", controller.getLocations);
+zoneRoute.get("/getLocations/:farmId", controller.getLocations);
 zoneRoute.get(
   "/getSensorsByZoneId/:zoneId/:sensorId",
   controller.getSensorsByZoneId

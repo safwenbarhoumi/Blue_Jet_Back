@@ -451,9 +451,27 @@ exports.updateAllValvesByZoneId = async (req, res) => {
   }
 };
 
-exports.getLocations = async (req, res) => {
+/* exports.getLocations = async (req, res) => {
   try {
     const zones = await Zone.find({}, "localisation_zone");
+    res.status(200).send(zones.map((zone) => zone.localisation_zone));
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+}; */
+exports.getLocations = async (req, res) => {
+  try {
+    const farmId = req.params.farmId;
+
+    // Ensure farmId is an ObjectId
+    const zones = await Zone.find({ farm: farmId }, "localisation_zone");
+
+    if (zones.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No zones found for the specified farm ID" });
+    }
+
     res.status(200).send(zones.map((zone) => zone.localisation_zone));
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });

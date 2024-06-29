@@ -33,6 +33,7 @@ const stegRoutes = require("./routes/steg.route");
 const notificationRoutes = require("./routes/notification.route");
 const mapsRoutes = require("./routes/maps.route");
 const contactRoute = require("./routes/contact.route");
+const langueRoute = require("./routes/language");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -78,6 +79,7 @@ app.listen(PORT, () => {
 
 app.use("/api", agriculturalZonesRoute);
 app.use("/api", alarmRoute);
+app.use("/api", langueRoute);
 //agriculteur middelwares
 app.use("/api", authRoutes);
 
