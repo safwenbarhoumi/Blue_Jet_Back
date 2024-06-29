@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
+const Activity = require("../models/activity");
 
 exports.updateValveNameById = async (req, res) => {
   try {
@@ -108,6 +109,32 @@ exports.getPumpsById = async (req, res) => {
   }
 };
 
+/* exports.updatePumpById = async (req, res) => {
+  try {
+    const zoneId = req.params.id;
+    const electricity_State = req.body.electricity_State;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update the electricity_State of the pump in the zone
+    if (!zone.pumps || zone.pumps.length === 0) {
+      return res.status(404).send({ message: "No pump found in the zone" });
+    }
+    // Assuming there is only one pump in the zone
+    zone.pumps[0].electricityState = electricity_State;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "Pump updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+}; */
 exports.updatePumpById = async (req, res) => {
   try {
     const zoneId = req.params.id;
@@ -128,6 +155,18 @@ exports.updatePumpById = async (req, res) => {
 
     // Save the updated zone
     await zone.save();
+
+    // Create a new activity
+    const newActivity = new Activity({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: "Le pompe a été modifié",
+      date: new Date().toISOString(), // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    //console.log("farm id =================== > ", zone.farm[0]._id);
+
+    // Save the new activity to the database
+    await newActivity.save();
 
     res.status(200).send({ message: "Pump updated successfully" });
   } catch (err) {

@@ -34,6 +34,7 @@ const notificationRoutes = require("./routes/notification.route");
 const mapsRoutes = require("./routes/maps.route");
 const contactRoute = require("./routes/contact.route");
 const langueRoute = require("./routes/language");
+const activityRoute = require("./routes/activity");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -76,7 +77,7 @@ const PORT = process.env.PORT || 9090;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
-
+app.use("/api", activityRoute);
 app.use("/api", agriculturalZonesRoute);
 app.use("/api", alarmRoute);
 app.use("/api", langueRoute);
