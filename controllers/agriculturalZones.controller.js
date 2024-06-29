@@ -33,6 +33,27 @@ exports.updateValveNameById = async (req, res) => {
   }
 };
 
+exports.getZoneDetailsByFarmId = async (req, res) => {
+  try {
+    const farmId = req.params.farmId;
+
+    // Fetch zones by farm ID
+    const zones = await Zone.find({ farm: farmId });
+
+    // Check if any zones are found
+    if (zones.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No zones found for this farm ID" });
+    }
+
+    // Return the zones
+    res.status(200).send(zones);
+  } catch (err) {
+    res.status(500).send({ message: "Some error occurred elsewhere" });
+  }
+};
+
 exports.getZoneDetails = async (req, res) => {
   try {
     // Fetch all zones
@@ -163,8 +184,6 @@ exports.updatePumpById = async (req, res) => {
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
-    //console.log("farm id =================== > ", zone.farm[0]._id);
-
     // Save the new activity to the database
     await newActivity.save();
 
@@ -258,6 +277,16 @@ exports.updateWellById = async (req, res) => {
     }
     // Assuming there is only one well in the zone
     zone.wells[0].electricityState = !zone.wells[0].electricityState;
+
+    // Create a new activity
+    const newActivity = new Activity({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: "Le puits a été modifié",
+      date: new Date().toISOString(), // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new activity to the database
+    await newActivity.save();
 
     // Save the updated zone
     await zone.save();
@@ -357,6 +386,15 @@ exports.updateValveById = async (req, res) => {
 
     // Save the updated zone
     await zone.save();
+    // Create a new activity
+    const newActivity = new Activity({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: "une valve a été modifié",
+      date: new Date().toISOString(), // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new activity to the database
+    await newActivity.save();
 
     res.status(200).send({ message: "Valve updated successfully" });
   } catch (err) {
@@ -394,8 +432,7 @@ exports.updateStateSTEGByZoneId = async (req, res) => {
     // Save the updated zone
     //await zone.save();
     const savedZone = await zone.save();
-    console.log("Saved zone: ", savedZone);
-
+    //console.log("Saved zone: ", savedZone);
     res.status(200).send({ message: `sucess` });
   } catch (err) {
     console.error(err); // Log the error for debugging
@@ -481,6 +518,15 @@ exports.updateAllValvesByZoneId = async (req, res) => {
 
     // Save the updated zone
     await zone.save();
+    // Create a new activity
+    const newActivity = new Activity({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: "Tout les valve d'un zone ont été modifié",
+      date: new Date().toISOString(), // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new activity to the database
+    await newActivity.save();
 
     res
       .status(200)
@@ -613,6 +659,16 @@ exports.resetAll = async (req, res) => {
           well.hardwareState = 0;
         });
       }
+
+      // Create a new activity
+      const newActivity = new Activity({
+        num_zone: zoneId, // Assuming zoneId is the number zone
+        description: "Touts les machines de votre farm ont été rénitialisation",
+        date: new Date().toISOString(), // Current date and time
+        farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+      });
+      // Save the new activity to the database
+      await newActivity.save();
 
       // Save the updated zone
       await zone.save();

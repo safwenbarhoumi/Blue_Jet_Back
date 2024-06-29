@@ -3,6 +3,7 @@ const { authJWT } = require("../middlewares");
 const zoneRoute = require("express").Router();
 
 zoneRoute.get("/zone", controller.getZoneDetails);
+zoneRoute.get("/zoneByFarmId/:farmId", controller.getZoneDetailsByFarmId);
 zoneRoute.post(
   "/updateValveNameById/:zoneId/:valveId",
   controller.updateValveNameById
