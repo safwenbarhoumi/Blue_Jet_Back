@@ -8,6 +8,10 @@ zoneRoute.post(
   "/updateValveNameById/:zoneId/:valveId",
   controller.updateValveNameById
 );
+zoneRoute.post(
+  "/updatePumpNameByZoneId/:zoneId",
+  controller.updatePumpNameByZoneId
+);
 zoneRoute.get("/getPumpByZoneId/:farmId/:zoneId", controller.getPumpsById);
 zoneRoute.post("/updatePumpByZoneId/:id", controller.updatePumpById);
 zoneRoute.get("/getWellByZoneId/:id", controller.getWellById);

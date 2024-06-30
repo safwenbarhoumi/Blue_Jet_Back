@@ -33,6 +33,34 @@ exports.updateValveNameById = async (req, res) => {
   }
 };
 
+exports.updatePumpNameByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    const namePump = req.body.namePump;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Check if there is at least one pump in the zone
+    if (!zone.pumps || zone.pumps.length === 0) {
+      return res.status(404).send({ message: "No pumps found in the zone" });
+    }
+
+    // Update the namePump of the first pump in the zone
+    zone.pumps[0].namePump = namePump;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "Pump name updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getZoneDetailsByFarmId = async (req, res) => {
   try {
     const farmId = req.params.farmId;
@@ -70,44 +98,7 @@ exports.getZoneDetails = async (req, res) => {
     res.status(500).send({ message: "Some error occurred elsewhere" });
   }
 };
-/* exports.getZoneDetails = async (req, res) => {
-  try {
-    const farmId = req.params.farmId.toString(); // Convert farmId to string for comparison
 
-    // Fetch all zones
-    const zones = await Zone.find({});
-
-    // Check if any zones are found
-    if (zones.length === 0) {
-      return res.status(404).send({ message: "No zones found" });
-    }
-
-    // Initialize an array to store matched zones
-    const matchedZones = [];
-
-    // Loop through each zone to find matches with the farm ID
-    for (const zone of zones) {
-      const farmId2 = zone.farm[0].toString(); // Ensure farm ID is converted to string for comparison
-      if (farmId === farmId2) {
-        matchedZones.push(zone);
-      }
-    }
-
-    // Check if any zones are matched
-    if (matchedZones.length === 0) {
-      return res
-        .status(404)
-        .send({ message: "No zones found for the specified farm ID" });
-    }
-
-    // Return the matched zones
-    res.status(200).send(matchedZones);
-  } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Some error occurred while fetching zone details" });
-  }
-}; */
 // changes code !
 exports.getPumpsById = async (req, res) => {
   try {
