@@ -2,6 +2,57 @@ const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
 const Activity = require("../models/activity");
+const Farm = require("../models/Farm.model");
+
+exports.getFarmsWithDetails = async (req, res) => {
+  try {
+    // Find all farms
+    const farms = await Farm.find({});
+    if (!farms || farms.length === 0) {
+      return res.status(404).send({ message: "No farms found" });
+    }
+
+    // Structure the response
+    const result = farms.map((farm) => ({
+      farmId: farm._id,
+      region: farm.region,
+      culture: farm.culture,
+      zones: farm.zones.map((zone) => ({
+        zoneId: zone._id,
+        zoneName: zone.name, // Assuming the zone has a name field
+        wells: zone.wells.map((well) => ({
+          wellId: well._id,
+          nameWell: well.nameWell, // Adjust this field based on your actual schema
+        })),
+        valves: zone.valves.map((valve) => ({
+          valveId: valve._id,
+          nameValve: valve.nameValve, // Adjust this field based on your actual schema
+        })),
+        pumps: zone.pumps.map((pump) => ({
+          pumpId: pump._id,
+          namePump: pump.namePump, // Adjust this field based on your actual schema
+        })),
+      })),
+      wells: farm.wells.map((well) => ({
+        wellId: well._id,
+        nameWell: well.nameWell, // Adjust this field based on your actual schema
+      })),
+      pumps: farm.pumps.map((pump) => ({
+        pumpId: pump._id,
+        namePump: pump.namePump, // Adjust this field based on your actual schema
+      })),
+      steg: farm.steg.map((steg) => ({
+        stegId: steg._id,
+        stegName: steg.name, // Adjust this field based on your actual schema
+      })),
+    }));
+
+    // Send the structured response
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
 
 exports.updateValveNameById = async (req, res) => {
   try {
@@ -28,6 +79,34 @@ exports.updateValveNameById = async (req, res) => {
     await zone.save();
 
     res.status(200).send({ message: "Valve name updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
+exports.updateNameWellByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    const nameWell = req.body.newnameWell;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Check if there is at least one well in the zone
+    if (!zone.wells || zone.wells.length === 0) {
+      return res.status(404).send({ message: "No wells found in the zone" });
+    }
+
+    // Update the nameWell of the first well in the zone
+    zone.wells[0].namewell = nameWell;
+
+    // Save the updated zone
+    await zone.save();
+
+    res.status(200).send({ message: "Well name updated successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }

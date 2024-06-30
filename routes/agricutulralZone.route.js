@@ -12,6 +12,11 @@ zoneRoute.post(
   "/updatePumpNameByZoneId/:zoneId",
   controller.updatePumpNameByZoneId
 );
+zoneRoute.post(
+  "/updateNameWellByZoneId/:zoneId",
+  controller.updateNameWellByZoneId
+);
+
 zoneRoute.get("/getPumpByZoneId/:farmId/:zoneId", controller.getPumpsById);
 zoneRoute.post("/updatePumpByZoneId/:id", controller.updatePumpById);
 zoneRoute.get("/getWellByZoneId/:id", controller.getWellById);
@@ -44,5 +49,7 @@ zoneRoute.post("/updateMesureByZoneId", controller.updateMesureByZoneId);
 zoneRoute.post("/resetAll", controller.resetAll);
 
 zoneRoute.post("/updateStateSTEGByZoneId", controller.updateStateSTEGByZoneId);
+
+zoneRoute.get("/getFarmsWithDetails", controller.getFarmsWithDetails);
 
 module.exports = zoneRoute;

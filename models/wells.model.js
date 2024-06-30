@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const wellSchema = new mongoose.Schema({
+  namewell: {
+    type: String,
+  },
   state: {
     type: Number,
     required: true,
@@ -16,4 +19,3 @@ const wellSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Well", wellSchema);
-
