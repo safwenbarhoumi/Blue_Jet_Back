@@ -82,6 +82,7 @@ exports.resetValve = async (req, res) => {
 
 exports.createValveSchedule = async (req, res) => {
   try {
+    //print("create valve schedule");
     const { valveId, day, timeRanges } = req.body;
 
     const zoneId = req.body.zoneId;
@@ -111,7 +112,8 @@ exports.createValveSchedule = async (req, res) => {
   }
 };
 // All valve :
-exports.createAllValveSchedule = async (req, res) => {
+/* exports.createAllValveSchedule = async (req, res) => {
+  console.log("******* create all valve schedule");
   try {
     const { day, timeRanges, zoneId } = req.body;
 
@@ -137,15 +139,16 @@ exports.createAllValveSchedule = async (req, res) => {
         timeRanges,
       });
       const savedValveSchedule = await newValveSchedule.save();
-
+      print("time range : ************************** ", timeRanges);
       const newProgram = new Program({
         num_zone: zoneId, // Assuming zoneId is the number zone
-        description: `Le valve a été programmé entre ${timeRanges}`,
-        date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
+        description: `Le valve a été programmé entre le ${day}`,
+        date: `Ce program a été créé depuis ...`, // Current date and time
         farm: zone.farm[0]._id, // Assuming the zone has a farm reference
       });
       // Save the new program to the database
       await newProgram.save();
+      console.log("the programmmmmmmmmmm ", newProgram);
 
       timeRanges.forEach((timeRange) => {
         scheduleActivateValve(timeRange.open, valveId, zoneId);
@@ -153,9 +156,68 @@ exports.createAllValveSchedule = async (req, res) => {
       });
     }
 
+    console.log("les vales sont programmé!");
+
     res.status(200).send({ message: "Valve schedules created successfully" });
   } catch (error) {
+    console.log("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
     res.status(500).send({ message: "An error occurred", error });
+  }
+}; */
+
+exports.createAllValveSchedule = async (req, res) => {
+  console.log("******* create all valve schedule");
+  try {
+    const { day, timeRanges, zoneId } = req.body;
+
+    // Find the zone by ID
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Find the user and populate farm information
+    const userId = req.userId; // Assuming userId is set in earlier middleware
+    const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Iterate over each valve in the zone
+    for (const valve of zone.valves) {
+      const valveId = valve._id;
+
+      // Create a new ValveSchedule
+      const newValveSchedule = new ValveSchedule({
+        valveId,
+        day,
+        timeRanges,
+      });
+      const savedValveSchedule = await newValveSchedule.save();
+
+      // Create a new Program
+      const newProgram = new Program({
+        num_zone: zoneId, // Assuming zoneId is the number zone
+        description: `Le valve a été programmé pour le ${day}`, // Fixing the description
+        date: new Date(), // Current date and time
+        farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+      });
+      await newProgram.save();
+
+      // Schedule activation and deactivation of valve based on timeRanges
+      timeRanges.forEach((timeRange) => {
+        scheduleActivateValve(timeRange.open, valveId, zoneId);
+        scheduleDesactivateValve(timeRange.close, valveId, zoneId);
+      });
+    }
+
+    console.log("Valves have been scheduled successfully!");
+    res.status(200).send({ message: "Valve schedules created successfully" });
+  } catch (error) {
+    console.error("Error occurred while creating valve schedule:", error);
+    res
+      .status(500)
+      .send({ message: "An error occurred", error: error.message });
   }
 };
 
