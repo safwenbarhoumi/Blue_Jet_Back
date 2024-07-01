@@ -2,6 +2,7 @@ const Wells = require("../models/wells.model");
 const User = require("../models/user.model");
 const WellSchedule = require("../models/wellSchedule.model");
 const Zone = require("../models/agriculturalZones.model");
+const Program = require("../models/program");
 
 const {
   scheduleActivateWell,
@@ -103,6 +104,15 @@ exports.createWellSchedule = async (req, res) => {
     const newWellSchedule = new WellSchedule({ wellId, day, timeRanges });
     console.log("new", newWellSchedule);
     const savedWellSchedule = await newWellSchedule.save();
+
+    const newProgram = new Program({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: `Le puit a été programmé entre ${timeRanges}`,
+      date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new program to the database
+    await newProgram.save();
 
     timeRanges.forEach((timeRange) => {
       scheduleActivateWell(timeRange.open, wellId, zoneId);

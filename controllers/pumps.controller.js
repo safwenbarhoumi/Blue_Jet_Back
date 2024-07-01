@@ -2,6 +2,7 @@ const Pump = require("../models/pumps.model");
 const PumpSchedule = require("../models/pumpSchedule.model");
 const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
+const Program = require("../models/program");
 
 const {
   scheduleActivatePump,
@@ -101,6 +102,15 @@ exports.createPumpSchedule = async (req, res) => {
       scheduleActivatePump(timeRange.open, pumpId, zoneId);
       scheduleDesactivatePump(timeRange.close, pumpId, zoneId);
     });
+
+    const newProgram = new Program({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: `Le pompe a été programmé entre ${timeRanges}`,
+      date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new program to the database
+    await newProgram.save();
 
     res.status(201).json(savedPumpSchedule);
   } catch (error) {

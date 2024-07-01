@@ -2,6 +2,8 @@ const Valve = require("../models/valves.model");
 const ValveSchedule = require("../models/valveSchedule.model");
 const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
+const Program = require("../models/program");
+
 const {
   scheduleActivateValve,
   scheduleDesactivateValve,
@@ -111,8 +113,7 @@ exports.createValveSchedule = async (req, res) => {
 // All valve :
 exports.createAllValveSchedule = async (req, res) => {
   try {
-    const { day, timeRanges } = req.body;
-    const zoneId = req.body.zoneId;
+    const { day, timeRanges, zoneId } = req.body;
 
     // Find the zone by ID
     const zone = await Zone.findById(zoneId);
@@ -137,18 +138,24 @@ exports.createAllValveSchedule = async (req, res) => {
       });
       const savedValveSchedule = await newValveSchedule.save();
 
+      const newProgram = new Program({
+        num_zone: zoneId, // Assuming zoneId is the number zone
+        description: `Le valve a été programmé entre ${timeRanges}`,
+        date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
+        farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+      });
+      // Save the new program to the database
+      await newProgram.save();
+
       timeRanges.forEach((timeRange) => {
         scheduleActivateValve(timeRange.open, valveId, zoneId);
         scheduleDesactivateValve(timeRange.close, valveId, zoneId);
       });
     }
 
-    res
-      .status(201)
-      .send({ message: "Schedules created for all valves in the zone" });
+    res.status(200).send({ message: "Valve schedules created successfully" });
   } catch (error) {
-    console.error("Error creating valve schedules:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).send({ message: "An error occurred", error });
   }
 };
 
