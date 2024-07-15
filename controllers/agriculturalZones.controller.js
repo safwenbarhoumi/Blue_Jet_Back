@@ -140,6 +140,65 @@ exports.updatePumpNameByZoneId = async (req, res) => {
   }
 };
 
+exports.getFarmDetailIdByPhone = async (req, res) => {
+  try {
+    const { phoneNumber } = req.params;
+
+    // Find the user by phone number
+    const user = await User.findOne({ phone: phoneNumber });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Get the farm associated with the user
+    const farmId = user.farm; // Assuming user.farm holds the farm ID
+    const farm = await Farm.findOne({ _id: farmId });
+    if (!farm) {
+      return res.status(404).send({ message: "Farm not found" });
+    }
+
+    // Structure the response
+    const result = {
+      farmId: farm._id,
+      region: farm.region,
+      culture: farm.culture,
+      zones: farm.zones.map((zone) => ({
+        zoneId: zone._id,
+        zoneName: zone.name, // Assuming the zone has a name field
+        wells: zone.wells.map((well) => ({
+          wellId: well._id,
+          nameWell: well.nameWell, // Adjust this field based on your actual schema
+        })),
+        valves: zone.valves.map((valve) => ({
+          valveId: valve._id,
+          nameValve: valve.nameValve, // Adjust this field based on your actual schema
+        })),
+        pumps: zone.pumps.map((pump) => ({
+          pumpId: pump._id,
+          namePump: pump.namePump, // Adjust this field based on your actual schema
+        })),
+      })),
+      wells: farm.wells.map((well) => ({
+        wellId: well._id,
+        nameWell: well.nameWell, // Adjust this field based on your actual schema
+      })),
+      pumps: farm.pumps.map((pump) => ({
+        pumpId: pump._id,
+        namePump: pump.namePump, // Adjust this field based on your actual schema
+      })),
+      steg: farm.steg.map((steg) => ({
+        stegId: steg._id,
+        stegName: steg.name, // Adjust this field based on your actual schema
+      })),
+    };
+
+    // Send the structured response
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getZoneDetailsByFarmId = async (req, res) => {
   try {
     const farmId = req.params.farmId;
@@ -732,7 +791,7 @@ exports.resetAll = async (req, res) => {
 
       // Create a new activity
       const newActivity = new Activity({
-        num_zone: zoneId, // Assuming zoneId is the number zone
+        //num_zone: zoneId, // Assuming zoneId is the number zone
         description: "Touts les machines de votre farm ont été rénitialisation",
         date: new Date().toISOString(), // Current date and time
         farm: zone.farm[0]._id, // Assuming the zone has a farm reference

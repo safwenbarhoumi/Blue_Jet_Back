@@ -12,6 +12,10 @@ const farmSchema = new mongoose.Schema({
   region: { type: String },
   culture: { type: String },
   alarm: { type: String },
+  alarmSchedule: {
+    time: { type: String },
+    days: { type: [String] },
+  },
   wells: [Well.schema],
   pumps: [Pumps.schema],
   zones: [Zone.schema],

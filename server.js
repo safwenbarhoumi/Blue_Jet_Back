@@ -80,12 +80,13 @@ app.listen(PORT, () => {
 });
 app.use("/api", activityRoute);
 app.use("/api", programRoute);
-app.use("/api", agriculturalZonesRoute);
-app.use("/api", alarmRoute);
+
+//app.use("/api", alarmRoute);
 app.use("/api", langueRoute);
 //agriculteur middelwares
-app.use("/api", authRoutes);
-
+app.use("/api", authRoutes); //************** */
+app.use("/api", agriculturalZonesRoute);
+app.use("/api", alarmRoute);
 app.use("/api", authJwt);
 app.use("/api", userRoute);
 app.use("/api", notificationRoute);
