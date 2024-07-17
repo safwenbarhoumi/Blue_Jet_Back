@@ -3,6 +3,7 @@ const Zone = require("../models/agriculturalZones.model");
 const Pump = require("../models/pumps.model");
 const Activity = require("../models/activity");
 const Farm = require("../models/Farm.model");
+const mongoose = require("mongoose");
 
 exports.getFarmsWithDetails = async (req, res) => {
   try {
@@ -665,14 +666,86 @@ exports.updateAllValvesByZoneId = async (req, res) => {
   }
 };
 
-/* exports.getLocations = async (req, res) => {
+exports.updateLocationByFarmId = async (req, res) => {
   try {
-    const zones = await Zone.find({}, "localisation_zone");
-    res.status(200).send(zones.map((zone) => zone.localisation_zone));
+    const { farmId } = req.params;
+    const { latitude, longitude } = req.body;
+
+    // Validate input
+    if (latitude === undefined || longitude === undefined) {
+      return res
+        .status(400)
+        .send({ message: "Latitude and longitude are required" });
+    }
+
+    // Update the zones associated with the farm
+    const updatedZones = await Zone.updateMany(
+      { farm: farmId },
+      {
+        $set: {
+          "localisation_zone.latitude": latitude,
+          "localisation_zone.longitude": longitude,
+        },
+      }
+    );
+
+    if (updatedZones.matchedCount === 0) {
+      return res
+        .status(404)
+        .send({ message: "No zones found for the specified farm ID" });
+    }
+
+    res.status(200).send({ message: "Locations updated successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
-}; */
+};
+
+exports.updateLocationByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    const { latitude, longitude } = req.body;
+
+    // Validate input
+    if (latitude === undefined || longitude === undefined) {
+      return res
+        .status(400)
+        .send({ message: "Latitude and longitude are required" });
+    }
+
+    const zone = await Zone.findById(zoneId);
+    // console.log("zone id ======> ", zoneId);
+    //console.log("zone ======> ", zone);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Update the location of the zone
+    const updatedZone = await Zone.findByIdAndUpdate(
+      zoneId,
+      {
+        $set: {
+          "localisation_zone.latitude": latitude,
+          "localisation_zone.longitude": longitude,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedZone) {
+      return res
+        .status(404)
+        .send({ message: "Zone not found for the specified zone ID" });
+    }
+
+    res
+      .status(200)
+      .send({ message: "Location updated successfully", updatedZone });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
 exports.getLocations = async (req, res) => {
   try {
     const farmId = req.params.farmId;

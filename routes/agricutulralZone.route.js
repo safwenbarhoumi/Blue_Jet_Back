@@ -33,6 +33,11 @@ zoneRoute.get(
   controller.getSensorsByZoneId
 );
 zoneRoute.post("/resetAll", controller.resetAll);
+zoneRoute.post("/updateLocationByFarmId", controller.updateLocationByFarmId);
+zoneRoute.post(
+  "/updateLocationByZoneId/:zoneId",
+  controller.updateLocationByZoneId
+);
 
 // hardware :
 zoneRoute.post("/stateWellById", controller.stateWellById);
