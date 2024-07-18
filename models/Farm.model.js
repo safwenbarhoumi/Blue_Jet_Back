@@ -21,6 +21,7 @@ const farmSchema = new mongoose.Schema({
   zones: [Zone.schema],
   steg: [Steg.schema],
 });
+const Farm = mongoose.models.Farm || mongoose.model("Farm", farmSchema);
 
-const Farm = mongoose.model("Farm", farmSchema);
+//const Farm = mongoose.model("Farm", farmSchema);
 module.exports = Farm;

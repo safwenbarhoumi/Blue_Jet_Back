@@ -3,6 +3,13 @@ const User = require("../models/user.model");
 const Notification = require("../models/notification.model");
 const { io } = require("../server"); // Import io instance
 const Farm = require("../models/Farm.model");
+const AlarmSchedule = require("../models/alarmSchedule.model");
+const Program = require("../models/program");
+
+const {
+  scheduleActivateAlarm,
+  scheduleDeactivateAlarm,
+} = require("../services/agenda/agendaJobs/alarme");
 
 exports.getAlarmByFarmId = async (req, res) => {
   try {
@@ -77,62 +84,42 @@ exports.updateAlarm = async (req, res) => {
 
 const moment = require("moment-timezone");
 
-exports.updateAlarmSchedule = async (req, res) => {
+exports.createAlarmSchedule = async (req, res) => {
+  const farmId = req.params.farmId;
+  const { day, timeRanges } = req.body;
+
   try {
-    console.log("Request received to update alarm schedule");
-
-    const farmId = req.params.farmId;
-    const { time, days } = req.body;
-
-    console.log("Farm ID:", farmId);
-    console.log("New Time:", time);
-    console.log("New Days:", days);
-
-    // Parse and validate time with the Tunisia time zone
-    const formattedTime = moment.tz(time, "HH:mm", "Africa/Tunis");
-    if (!formattedTime.isValid()) {
-      return res.status(400).send({ message: "Invalid time format" });
-    }
-
     const farm = await Farm.findById(farmId);
-
     if (!farm) {
-      console.log("Farm not found");
       return res.status(404).send({ message: "Farm not found" });
     }
 
-    const currentAlarmSchedule = farm.alarmSchedule || {};
-    console.log("Current Alarm Schedule:", currentAlarmSchedule);
+    const newAlarmSchedule = new AlarmSchedule({ farmId, day, timeRanges });
+    const savedAlarmSchedule = await newAlarmSchedule.save();
+    console.log("farm id ===== ", farmId);
+    console.log("savedAlarmSchedule ===== ", savedAlarmSchedule);
+    console.log("day ====== ", day);
+    console.log("timeRanges ====== ", timeRanges);
 
-    if (
-      currentAlarmSchedule.time === time &&
-      JSON.stringify(currentAlarmSchedule.days) === JSON.stringify(days)
-    ) {
-      console.log("Alarm schedule is already set to this schedule");
-      return res.send({
-        message: "The alarm schedule is already set to this schedule",
-      });
-    } else {
-      farm.alarmSchedule = { time: formattedTime.format("HH:mm"), days };
-      await farm.save();
-      console.log("Alarm schedule updated successfully");
+    timeRanges.forEach((timeRange) => {
+      scheduleActivateAlarm(timeRange.start, farmId);
+      scheduleDeactivateAlarm(timeRange.end, farmId);
+    });
 
-      const currentDate = new Date().toISOString();
-      const newNotification = new Notification({
-        title: `The alarm schedule has been changed to ${time} on days ${days.join(
-          ", "
-        )}.`,
-        date: currentDate,
-        farm: farm._id,
-      });
+    const newProgram = new Program({
+      num_farm: farmId, // Assuming farmId is the number farm
+      description: `The alarm has been scheduled between ${timeRanges
+        .map((tr) => `${tr.start} and ${tr.end}`)
+        .join(", ")}`,
+      date: `This program was created on: ${new Date().toISOString()}`, // Current date and time
+      farm: farm._id, // Reference to the farm
+    });
+    // Save the new program to the database
+    await newProgram.save();
 
-      await newNotification.save();
-      console.log("Notification saved");
-
-      res.status(200).send({ message: "Alarm schedule updated successfully" });
-    }
+    res.status(201).json(savedAlarmSchedule);
   } catch (error) {
-    console.log("Error occurred:", error);
-    res.status(500).send({ message: error.message || "Some error occurred." });
+    console.error("Error creating alarm schedule:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

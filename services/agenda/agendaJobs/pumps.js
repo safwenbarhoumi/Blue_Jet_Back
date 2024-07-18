@@ -2,19 +2,6 @@ const agenda = require("../config");
 const Pump = require("../../../models/pumps.model");
 const Zone = require("../../../models/agriculturalZones.model");
 
-/* agenda.define("activate pump", async (job) => {
-  const { pumpId } = job.attrs.data;
-  try {
-    // Update the pump state to "open" in the database
-    await Pump.findByIdAndUpdate(pumpId, {
-      "zone.pumps.0.electricityState": 1,
-    });
-    console.log(`Activating pump ID ${pumpId}`);
-  } catch (error) {
-    console.error(`Error activating pump with ID ${pumpId}:`, error);
-  }
-}); */
-
 agenda.define("activate pump", async (job) => {
   const { pumpId, zoneId } = job.attrs.data;
   try {

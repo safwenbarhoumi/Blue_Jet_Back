@@ -714,7 +714,7 @@ exports.updateLocationByZoneId = async (req, res) => {
     }
 
     const zone = await Zone.findById(zoneId);
-    // console.log("zone id ======> ", zoneId);
+    //console.log("zone id ======> ", zoneId);
     //console.log("zone ======> ", zone);
     if (!zone) {
       return res.status(404).send({ message: "Zone not found" });
