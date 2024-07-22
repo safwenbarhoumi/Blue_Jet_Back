@@ -13,18 +13,12 @@ const {
 
 exports.getAlarmByFarmId = async (req, res) => {
   try {
-    // Extract the farm ID from the request parameters
     const farmId = req.params.farmId;
-
-    // Fetch the farm document from the database
     const farm = await Farm.findById(farmId);
-
-    // Check if the farm exists
     if (!farm) {
       return res.status(404).send({ message: "Farm not found" });
     }
 
-    // Get the current alarm state
     const currentAlarmState = farm.alarm;
 
     // Send the current alarm state as the response
@@ -96,10 +90,10 @@ exports.createAlarmSchedule = async (req, res) => {
 
     const newAlarmSchedule = new AlarmSchedule({ farmId, day, timeRanges });
     const savedAlarmSchedule = await newAlarmSchedule.save();
-    console.log("farm id ===== ", farmId);
-    console.log("savedAlarmSchedule ===== ", savedAlarmSchedule);
-    console.log("day ====== ", day);
-    console.log("timeRanges ====== ", timeRanges);
+    //console.log("farm id ===== ", farmId);
+    //console.log("savedAlarmSchedule ===== ", savedAlarmSchedule);
+    //console.log("day ====== ", day);
+    //console.log("timeRanges ====== ", timeRanges);
 
     timeRanges.forEach((timeRange) => {
       scheduleActivateAlarm(timeRange.start, farmId);
@@ -114,7 +108,6 @@ exports.createAlarmSchedule = async (req, res) => {
       date: `This program was created on: ${new Date().toISOString()}`, // Current date and time
       farm: farm._id, // Reference to the farm
     });
-    // Save the new program to the database
     await newProgram.save();
 
     res.status(201).json(savedAlarmSchedule);

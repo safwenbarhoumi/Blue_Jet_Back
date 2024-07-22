@@ -3,13 +3,16 @@ const Alarm = require("../../../models/alarm.model");
 const Farm = require("../../../models/farm.model");
 
 agenda.define("activate alarm", async (job) => {
+  console.log("from activate alarme ::::::::::::::");
   const { farmId } = job.attrs.data;
   try {
     const farm = await Farm.findById(farmId);
+    console.log("farm[alarme] before activate: ", farm.alarm);
     if (farm) {
-      farm.alarmState = 1;
+      farm.alarm = 1;
       await farm.save();
       console.log(`Activating alarm for farm ID ${farmId}`);
+      console.log("farm[alarme] after activate: ", farm.alarm);
     } else {
       console.error(`Farm with ID ${farmId} not found`);
     }
@@ -19,11 +22,12 @@ agenda.define("activate alarm", async (job) => {
 });
 
 agenda.define("deactivate alarm", async (job) => {
+  console.log("from Desactivate alarme ::::::::::::::");
   const { farmId } = job.attrs.data;
   try {
     const farm = await Farm.findById(farmId);
     if (farm) {
-      farm.alarmState = 0;
+      farm.alarm = 0;
       await farm.save();
       console.log(`Deactivating alarm for farm ID ${farmId}`);
     } else {
