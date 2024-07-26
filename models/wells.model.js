@@ -16,6 +16,14 @@ const wellSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  allWater: {
+    type: Number,
+    required: true,
+  },
+  usedWater: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Well", wellSchema);

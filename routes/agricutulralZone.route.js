@@ -39,6 +39,8 @@ zoneRoute.post(
   controller.updateLocationByZoneId
 );
 
+zoneRoute.get("/getWaterByZoneId/:zoneId", controller.getWaterByZoneId);
+
 // hardware :
 zoneRoute.post("/stateWellById", controller.stateWellById);
 zoneRoute.post("/updateHardwareWellByZoneId", controller.updatHardwareWellById);

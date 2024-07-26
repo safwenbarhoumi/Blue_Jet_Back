@@ -22,7 +22,7 @@ const AlarmScheduleSchema = new mongoose.Schema({
       "Saturday",
       "Sunday",
     ],
-    required: true,
+    //required: true,
   },
   timeRanges: [timeRangeSchema],
 });

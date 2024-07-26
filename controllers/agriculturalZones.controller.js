@@ -883,3 +883,41 @@ exports.resetAll = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
 };
+
+exports.getWaterByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Check if there is at least one well in the zone
+    if (!zone.wells || zone.wells.length === 0) {
+      return res.status(404).send({ message: "No wells found in the zone" });
+    }
+
+    // Calculate total allWater and usedWater for the zone
+    let totalAllWater = 0;
+    let totalUsedWater = 0;
+
+    zone.wells.forEach((well) => {
+      totalAllWater += well.allWater;
+      totalUsedWater += well.usedWater;
+    });
+
+    // Structure the response
+    const result = {
+      zoneId: zone._id,
+      totalAllWater: totalAllWater,
+      totalUsedWater: totalUsedWater,
+    };
+
+    // Send the structured response
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};

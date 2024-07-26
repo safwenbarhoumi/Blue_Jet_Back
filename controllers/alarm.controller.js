@@ -87,14 +87,8 @@ exports.createAlarmSchedule = async (req, res) => {
     if (!farm) {
       return res.status(404).send({ message: "Farm not found" });
     }
-
     const newAlarmSchedule = new AlarmSchedule({ farmId, day, timeRanges });
     const savedAlarmSchedule = await newAlarmSchedule.save();
-    //console.log("farm id ===== ", farmId);
-    //console.log("savedAlarmSchedule ===== ", savedAlarmSchedule);
-    //console.log("day ====== ", day);
-    //console.log("timeRanges ====== ", timeRanges);
-
     timeRanges.forEach((timeRange) => {
       scheduleActivateAlarm(timeRange.start, farmId);
       scheduleDeactivateAlarm(timeRange.end, farmId);
