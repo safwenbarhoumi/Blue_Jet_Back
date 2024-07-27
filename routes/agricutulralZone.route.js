@@ -61,4 +61,6 @@ zoneRoute.get("/getFarmsWithDetails", controller.getFarmsWithDetails);
 
 zoneRoute.get("/getFarmDetailIdByPhone", controller.getFarmDetailIdByPhone);
 
+zoneRoute.post("/addWaterByZoneId/:zoneId", controller.addWaterByZoneId);
+
 module.exports = zoneRoute;

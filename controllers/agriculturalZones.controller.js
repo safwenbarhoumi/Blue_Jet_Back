@@ -921,3 +921,60 @@ exports.getWaterByZoneId = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred." });
   }
 };
+
+exports.addWaterByZoneId = async (req, res) => {
+  try {
+    const zoneId = req.params.zoneId;
+    let { allWater, usedWater } = req.body;
+
+    // Validate and parse input
+    allWater = parseFloat(allWater);
+    usedWater = parseFloat(usedWater);
+
+    if (isNaN(allWater) || isNaN(usedWater)) {
+      return res.status(400).send({
+        message:
+          "Invalid input. 'allWater' and 'usedWater' should be valid numbers.",
+      });
+    }
+
+    // Find the zone
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+
+    // Check if there is at least one well in the zone
+    if (!zone.wells || zone.wells.length === 0) {
+      return res.status(404).send({ message: "No wells found in the zone" });
+    }
+
+    // Update the water data with the new values
+    zone.wells.forEach((well) => {
+      well.allWater = allWater;
+      well.usedWater = usedWater;
+    });
+
+    // Save the updated zone back to the database
+    await zone.save();
+
+    // Structure the response
+    const result = {
+      zoneId: zone._id,
+      message: "Water data updated successfully",
+      totalAllWater: zone.wells.reduce(
+        (total, well) => total + well.allWater,
+        0
+      ),
+      totalUsedWater: zone.wells.reduce(
+        (total, well) => total + well.usedWater,
+        0
+      ),
+    };
+
+    // Send the structured response
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
