@@ -198,7 +198,7 @@ exports.createAllValveSchedule = async (req, res) => {
       // Create a new Program
       const newProgram = new Program({
         num_zone: zoneId, // Assuming zoneId is the number zone
-        description: `Le valve a été programmé pour le ${day}`, // Fixing the description
+        description: `valve`, // Fixing the description
         date: new Date(), // Current date and time
         farm: zone.farm[0]._id, // Assuming the zone has a farm reference
       });

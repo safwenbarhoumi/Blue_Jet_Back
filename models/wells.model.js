@@ -18,11 +18,11 @@ const wellSchema = new mongoose.Schema({
   },
   allWater: {
     type: Number,
-    required: true,
+    //required: true,
   },
   usedWater: {
     type: Number,
-    required: true,
+    //required: true,
   },
 });
 

@@ -94,7 +94,7 @@ exports.createAlarmSchedule = async (req, res) => {
       scheduleDeactivateAlarm(timeRange.end, farmId);
     });
 
-    const newProgram = new Program({
+    /*const newProgram = new Program({
       num_farm: farmId, // Assuming farmId is the number farm
       description: `The alarm has been scheduled between ${timeRanges
         .map((tr) => `${tr.start} and ${tr.end}`)
@@ -102,11 +102,34 @@ exports.createAlarmSchedule = async (req, res) => {
       date: `This program was created on: ${new Date().toISOString()}`, // Current date and time
       farm: farm._id, // Reference to the farm
     });
-    await newProgram.save();
+    await newProgram.save();*/
 
     res.status(201).json(savedAlarmSchedule);
   } catch (error) {
     console.error("Error creating alarm schedule:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.getAllAlarmByFarmId = async (req, res) => {
+  const farmId = req.params.farmId;
+
+  try {
+    // Fetch all alarm schedules for the given farm ID
+    const alarmSchedules = await AlarmSchedule.find({ farmId: farmId });
+
+    // Check if any alarm schedules were found
+    if (alarmSchedules.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No alarm schedules found for this farm" });
+    }
+
+    // Send the alarm schedules in the response
+    res.status(200).json(alarmSchedules);
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching alarm schedules:", error);
+    res.status(500).send({ message: error.message || "Some error occurred." });
   }
 };

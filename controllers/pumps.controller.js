@@ -3,6 +3,7 @@ const PumpSchedule = require("../models/pumpSchedule.model");
 const User = require("../models/user.model");
 const Zone = require("../models/agriculturalZones.model");
 const Program = require("../models/program");
+const moment = require("moment-timezone");
 
 const {
   scheduleActivatePump,
@@ -76,7 +77,7 @@ exports.resetPump = async (req, res) => {
 };
 
 // Controller to create schedules for a one specific pump.
-exports.createPumpSchedule = async (req, res) => {
+/* exports.createPumpSchedule = async (req, res) => {
   const userId = req.userId;
   const { pumpId, day, timeRanges } = req.body;
 
@@ -105,13 +106,64 @@ exports.createPumpSchedule = async (req, res) => {
 
     const newProgram = new Program({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: `Le pompe a été programmé entre ${timeRanges}`,
-      date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
+      description: `pompe`,
+      date: ` ${timeRanges}`, // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
     // Save the new program to the database
     await newProgram.save();
 
+    res.status(201).json(savedPumpSchedule);
+  } catch (error) {
+    console.error("Error creating pump schedule:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}; */
+
+exports.createPumpSchedule = async (req, res) => {
+  const userId = req.userId;
+  const { pumpId, day, timeRanges } = req.body;
+
+  try {
+    const user = await User.findById(userId).populate("farm");
+    if (!user || !user.farm) {
+      return res.status(404).send({ message: "User not found." });
+    }
+    const zoneId = req.body.zoneId;
+    const zone = await Zone.findById(zoneId);
+    if (!zone) {
+      return res.status(404).send({ message: "Zone not found" });
+    }
+    const pumpes = zone.pumps.find((pumpes) => pumpes._id == pumpId);
+    if (!pumpes) {
+      return res.status(404).send({ message: "pump not found." });
+    }
+
+    const newPumpSchedule = new PumpSchedule({ pumpId, day, timeRanges });
+    const savedPumpSchedule = await newPumpSchedule.save();
+
+    timeRanges.forEach((timeRange) => {
+      scheduleActivatePump(timeRange.open, pumpId, zoneId);
+      scheduleDesactivatePump(timeRange.close, pumpId, zoneId);
+    });
+
+    // Format timeRanges into DD/MM/YYYY HH:MM
+    const formattedTimeRanges = timeRanges
+      .map((timeRange) => {
+        const openTime = moment(timeRange.open).format("DD/MM/YYYY HH:mm");
+        const closeTime = moment(timeRange.close).format("DD/MM/YYYY HH:mm");
+        return `Open: ${openTime}, Close: ${closeTime}`;
+      })
+      .join(", ");
+
+    const newProgram = new Program({
+      num_zone: zoneId, // Assuming zoneId is the number zone
+      description: `pompe`,
+      date: ` ${moment().format("DD/MM/YYYY HH:mm")} \n ${formattedTimeRanges}`, // Formatted date and time
+      farm: zone.farm[0]._id, // Assuming the zone has a farm reference
+    });
+    // Save the new program to the database
+    await newProgram.save();
     res.status(201).json(savedPumpSchedule);
   } catch (error) {
     console.error("Error creating pump schedule:", error);

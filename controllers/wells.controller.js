@@ -107,7 +107,7 @@ exports.createWellSchedule = async (req, res) => {
 
     const newProgram = new Program({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: `Le puit a été programmé entre ${timeRanges}`,
+      description: `puit`,
       date: `Ce program a été créé depuis : ${new Date().toISOString()}`, // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });

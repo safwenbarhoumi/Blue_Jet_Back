@@ -310,7 +310,7 @@ exports.updatePumpById = async (req, res) => {
     // Create a new activity
     const newActivity = new Activity({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: "Le pompe a été modifié",
+      description: "updatePompe",
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
@@ -411,7 +411,7 @@ exports.updateWellById = async (req, res) => {
     // Create a new activity
     const newActivity = new Activity({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: "Le puits a été modifié",
+      description: "updateWell",
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
@@ -519,7 +519,7 @@ exports.updateValveById = async (req, res) => {
     // Create a new activity
     const newActivity = new Activity({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: "une valve a été modifié",
+      description: "updateValve",
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
@@ -651,7 +651,7 @@ exports.updateAllValvesByZoneId = async (req, res) => {
     // Create a new activity
     const newActivity = new Activity({
       num_zone: zoneId, // Assuming zoneId is the number zone
-      description: "Tout les valve d'un zone ont été modifié",
+      description: "updateAllValves",
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
@@ -865,7 +865,7 @@ exports.resetAll = async (req, res) => {
       // Create a new activity
       const newActivity = new Activity({
         //num_zone: zoneId, // Assuming zoneId is the number zone
-        description: "Touts les machines de votre farm ont été rénitialisation",
+        description: "Reset",
         date: new Date().toISOString(), // Current date and time
         farm: zone.farm[0]._id, // Assuming the zone has a farm reference
       });
