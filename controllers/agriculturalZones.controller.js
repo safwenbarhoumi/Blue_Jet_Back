@@ -983,7 +983,7 @@ exports.addWaterByZoneId = async (req, res) => {
   }
 };
 
-exports.updateAlarm = async (req, res) => {
+/* exports.updateAlarm = async (req, res) => {
   try {
     // Extract the farm ID from the request parameters and the new alarm state from the request body
     const farmId = req.params.farmId;
@@ -1023,6 +1023,59 @@ exports.updateAlarm = async (req, res) => {
 
       // Send a success response
       res.status(200).send({ message: "Alarm updated successfully" });
+    }
+  } catch (error) {
+    // Handle errors
+    res.status(500).send({ message: error.message || "Some error occurred." });
+  }
+};
+ */
+
+const Alarm = require("../models/alarm.model");
+
+exports.updateAlarmState = async (req, res) => {
+  try {
+    // Extract the farm ID from the request parameters and the new hardware state from the request body
+    const farmId = req.params.farmId;
+    const hardwareState = req.body.hardware_State;
+
+    // Fetch the farm document from the database
+    const farm = await Farm.findById(farmId);
+
+    // Check if the farm exists
+    if (!farm) {
+      return res.status(404).send({ message: "Farm not found" });
+    }
+
+    // Find the associated alarm for the farm
+    //const alarm = await Alarm.findOne({ farm: farm._id });
+
+    const alarm = farm.alarm;
+    console.log("alarm : ", alarm);
+
+    // Check if the alarm exists
+    if (!alarm) {
+      return res.status(404).send({ message: "Alarm not found for this farm" });
+    }
+
+    // Get the current hardware state
+    const currentHardwareState = alarm.hardware_State;
+
+    // Check if the new hardware state is different from the current one
+    if (currentHardwareState === hardwareState) {
+      return res.send({
+        message: "The hardware state is already set to this state",
+      });
+    } else {
+      // Update the hardware state
+      /* alarm = hardwareState;
+      await alarm.save(); */
+
+      farm.alarm = hardwareState;
+      await farm.save();
+
+      // Send a success response
+      res.status(200).send({ message: "Hardware state updated successfully" });
     }
   } catch (error) {
     // Handle errors

@@ -64,7 +64,7 @@ zoneRoute.get(
   controller.getFarmDetailIdByPhone
 );
 
-zoneRoute.post("/updateAlarmState", controller.updateAlarm);
+zoneRoute.post("/updateAlarmState/:farmId", controller.updateAlarmState);
 
 zoneRoute.post("/addWaterByZoneId/:zoneId", controller.addWaterByZoneId);
 
