@@ -1,6 +1,6 @@
 const agenda = require("../config");
 const Alarm = require("../../../models/alarm.model");
-const Farm = require("../../../models/farm.model");
+const Farm = require("../../../models/Farm.model");
 
 agenda.define("activate alarm", async (job) => {
   console.log("from activate alarme ::::::::::::::");

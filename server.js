@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure and use CORS middleware
 const corsOptions = {
-  origin: "http://erwiniapp-5595a7ccf953.herokuapp.com:9091",
+  origin: "http://erwiniapp-5595a7ccf953.herokuapp.com",
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   optionsSuccessStatus: 200, // Some legacy browsers choke on 204
 };
