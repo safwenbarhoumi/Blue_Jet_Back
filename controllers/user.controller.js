@@ -14,6 +14,7 @@ exports.getProfile = async (req, res) => {
       name: user.name,
       address: user.address,
       phone: user.phone,
+      image: user.image, // Include image in the response
       farm: user.farm[0]._id,
     };
 
@@ -25,6 +26,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
+    console.log("update profile function !");
     const userId = req.userId;
 
     const user = await User.findById(userId).populate("farm");
@@ -32,9 +34,21 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    user.name = req.body.name;
-    user.address = req.body.address;
-    user.phone = req.body.phone;
+    // Check each field and update if it exists in the request
+    if (req.body.name !== undefined) {
+      user.name = req.body.name;
+    }
+    if (req.body.address !== undefined) {
+      user.address = req.body.address;
+    }
+    if (req.body.phone !== undefined) {
+      user.phone = req.body.phone;
+    }
+    if (req.file) {
+      user.image = req.file.path; // Save the file path to the database
+    }
+    console.log("user name  ", user.name);
+    console.log("body name  ", req.body.name);
 
     await user.save();
 
@@ -42,6 +56,7 @@ exports.updateProfile = async (req, res) => {
       name: user.name,
       address: user.address,
       phone: user.phone,
+      image: user.image,
     };
 
     res.status(200).json({ profile: updatedProfile });

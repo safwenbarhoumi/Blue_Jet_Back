@@ -143,13 +143,15 @@ exports.updatePumpNameByZoneId = async (req, res) => {
 
 exports.getFarmDetailIdByPhone = async (req, res) => {
   try {
-    const { phoneNumber } = req.params;
+    const phoneNumber = req.params.phone;
+    console.log("phone : ", phoneNumber);
 
     // Find the user by phone number
     const user = await User.findOne({ phone: phoneNumber });
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
+    console.log("name user : ", user.name);
 
     // Get the farm associated with the user
     const farmId = user.farm; // Assuming user.farm holds the farm ID
@@ -160,6 +162,8 @@ exports.getFarmDetailIdByPhone = async (req, res) => {
 
     // Structure the response
     const result = {
+      name: user.name,
+      adress: user.adress,
       farmId: farm._id,
       region: farm.region,
       culture: farm.culture,
@@ -179,14 +183,14 @@ exports.getFarmDetailIdByPhone = async (req, res) => {
           namePump: pump.namePump, // Adjust this field based on your actual schema
         })),
       })),
-      wells: farm.wells.map((well) => ({
+      /* wells: farm.wells.map((well) => ({
         wellId: well._id,
         nameWell: well.nameWell, // Adjust this field based on your actual schema
       })),
       pumps: farm.pumps.map((pump) => ({
         pumpId: pump._id,
         namePump: pump.namePump, // Adjust this field based on your actual schema
-      })),
+      })), */
       steg: farm.steg.map((steg) => ({
         stegId: steg._id,
         stegName: steg.name, // Adjust this field based on your actual schema
@@ -517,14 +521,14 @@ exports.updateValveById = async (req, res) => {
     // Save the updated zone
     await zone.save();
     // Create a new activity
-    const newActivity = new Activity({
+    /* const newActivity = new Activity({
       num_zone: zoneId, // Assuming zoneId is the number zone
       description: "updateValve",
       date: new Date().toISOString(), // Current date and time
       farm: zone.farm[0]._id, // Assuming the zone has a farm reference
     });
     // Save the new activity to the database
-    await newActivity.save();
+    await newActivity.save(); */
 
     res.status(200).send({ message: "Valve updated successfully" });
   } catch (err) {
@@ -976,5 +980,52 @@ exports.addWaterByZoneId = async (req, res) => {
     res.status(200).send(result);
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred." });
+  }
+};
+
+exports.updateAlarm = async (req, res) => {
+  try {
+    // Extract the farm ID from the request parameters and the new alarm state from the request body
+    const farmId = req.params.farmId;
+    const alarmState = req.body.state;
+
+    // Fetch the farm document from the database
+    const farm = await Farm.findById(farmId);
+
+    // Check if the farm exists
+    if (!farm) {
+      return res.status(404).send({ message: "Farm not found" });
+    }
+
+    // Get the current alarm state
+    const currentAlarmState = farm.alarm;
+
+    // Check if the new alarm state is different from the current one
+    if (currentAlarmState === alarmState) {
+      return res.send({
+        message: "The alarm state is already set to this state",
+      });
+    } else {
+      // Update the alarm state
+      farm.alarm = alarmState;
+      await farm.save();
+
+      // Create a new notification
+      const currentDate = new Date().toISOString();
+      const newNotification = new Notification({
+        title: `The alarm has been changed from ${currentAlarmState} to ${alarmState}.`,
+        date: currentDate,
+        farm: farm._id,
+      });
+
+      // Save the notification
+      await newNotification.save();
+
+      // Send a success response
+      res.status(200).send({ message: "Alarm updated successfully" });
+    }
+  } catch (error) {
+    // Handle errors
+    res.status(500).send({ message: error.message || "Some error occurred." });
   }
 };

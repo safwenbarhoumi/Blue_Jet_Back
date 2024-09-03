@@ -6,15 +6,15 @@ const wellSchema = new mongoose.Schema({
   },
   state: {
     type: Number,
-    required: true,
+    //required: true,
   },
   electricityState: {
     type: Number,
-    required: true,
+    //required: true,
   },
   hardwareState: {
     type: Number,
-    required: true,
+    //required: true,
   },
   allWater: {
     type: Number,

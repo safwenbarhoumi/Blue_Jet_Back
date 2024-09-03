@@ -13,7 +13,7 @@ const sensorsSchema = new mongoose.Schema(
     },
     id_sensor: {
       type: Number,
-      require: true,
+      //require: true,
     },
   }
   //{ timestamps: true }

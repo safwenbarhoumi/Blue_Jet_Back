@@ -39,12 +39,15 @@ const programRoute = require("./routes/program");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: process.env.ALLOWED_ORIGIN,
-    credentials: true,
-  })
-);
+
+// Configure and use CORS middleware
+const corsOptions = {
+  origin: "http://192.168.43.44:9091",
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+};
+
+app.use(cors(corsOptions));
 
 app.use(
   cookieSession({
@@ -74,26 +77,24 @@ connectToMongoDB();
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to ERWINI application." });
 });
+
 const PORT = process.env.PORT || 9090;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+// Define routes
 app.use("/api", activityRoute);
 app.use("/api", programRoute);
-
-//app.use("/api", alarmRoute);
 app.use("/api", langueRoute);
-//agriculteur middelwares
 app.use("/api", authRoutes); //************** */
 app.use("/api", agriculturalZonesRoute);
 app.use("/api", alarmRoute);
 app.use("/api", authJwt);
 app.use("/api", userRoute);
 app.use("/api", notificationRoute);
-
 app.use("/api", sensorsRoute);
 app.use("/api", pumpsRoute);
-
 app.use("/api", wellsRoute);
 app.use("/api", valvesRoute);
 app.use("/api", farmRoute);
@@ -102,5 +103,5 @@ app.use("/api", notificationRoutes);
 app.use("/api", mapsRoutes);
 app.use("/api", contactRoute);
 
-//admin middelwares
+// Export the modules
 module.exports = { app, server, io };

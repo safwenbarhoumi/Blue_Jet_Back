@@ -59,7 +59,12 @@ zoneRoute.post("/updateStateSTEGByZoneId", controller.updateStateSTEGByZoneId);
 
 zoneRoute.get("/getFarmsWithDetails", controller.getFarmsWithDetails);
 
-zoneRoute.get("/getFarmDetailIdByPhone", controller.getFarmDetailIdByPhone);
+zoneRoute.get(
+  "/getFarmDetailIdByPhone/:phone",
+  controller.getFarmDetailIdByPhone
+);
+
+zoneRoute.post("/updateAlarmState", controller.updateAlarm);
 
 zoneRoute.post("/addWaterByZoneId/:zoneId", controller.addWaterByZoneId);
 
