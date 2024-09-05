@@ -60,11 +60,13 @@ exports.updateAlarm = async (req, res) => {
       const currentDate = new Date().toISOString();
       let title = "";
 
-      if (currentAlarmState === 1) {
+      if (currentAlarmState === "1") {
         title = "Le alarme a été désactivé";
-      } else if (currentAlarmState === 0) {
+      } else if (currentAlarmState === "0") {
         title = "Le alarme a été activé";
       }
+
+      console.log("current alarme state : ", currentAlarmState);
 
       const newNotification = new Notification({
         title: title,
@@ -74,7 +76,7 @@ exports.updateAlarm = async (req, res) => {
 
       // Save the notification
       await newNotification.save();
-
+      console.log("notification : ===", newNotification);
       // Send a success response
       res.status(200).send({ message: "Alarm updated successfully" });
     }
