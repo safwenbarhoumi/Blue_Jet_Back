@@ -58,8 +58,16 @@ exports.updateAlarm = async (req, res) => {
 
       // Create a new notification
       const currentDate = new Date().toISOString();
+      let title = "";
+
+      if (currentAlarmState === 1) {
+        title = "Le alarme a été désactivé";
+      } else if (currentAlarmState === 0) {
+        title = "Le alarme a été activé";
+      }
+
       const newNotification = new Notification({
-        title: `The alarm has been changed from ${currentAlarmState} to ${alarmState}.`,
+        title: title,
         date: currentDate,
         farm: farm._id,
       });
