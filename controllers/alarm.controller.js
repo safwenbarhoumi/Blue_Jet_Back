@@ -58,6 +58,7 @@ exports.updateAlarm = async (req, res) => {
 
       // Create a new notification
       const currentDate = new Date().toISOString();
+      // initialize title :
       let title = "";
 
       if (currentAlarmState === "1") {
